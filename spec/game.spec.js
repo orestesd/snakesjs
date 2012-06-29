@@ -73,4 +73,36 @@ describe("player", function() {
 		expect(player.getPositions().length).toEqual(5);
 		expect(player.getPositions()[0]).toEqual([1, 3]);
 	});	
+
+	it("the snake's tail size can grow, shrink and reset", function() {
+		var player = snakes.createPlayer(1, 'john');
+
+		expect(player.getTailSize()).toEqual(5);
+		player.grow(3);
+		expect(player.getTailSize()).toEqual(8);
+		player.grow(-5);
+		expect(player.getTailSize()).toEqual(3);
+
+		player.moveTo([1, 2]);
+        player.moveTo([1, 3]);
+        player.moveTo([1, 4]);
+        player.moveTo([1, 5]);
+
+		expect(player.getPositions().length).toEqual(3);
+		expect(player.getPositions()[0]).toEqual([1,3]);
+
+		player.grow(1);
+		player.moveTo([1, 6]);
+        expect(player.getPositions().length).toEqual(4);
+        expect(player.getPositions()[0]).toEqual([1,3]);
+
+		player.grow(-2);
+		player.moveTo([1, 7]);
+		expect(player.getPositions().length).toEqual(2);
+        player.moveTo([1, 5]);
+
+		player.resetTailSize();
+		expect(player.getTailSize()).toEqual(5);
+	});
+	
 });

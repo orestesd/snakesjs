@@ -31,6 +31,14 @@ var Player = function(id, name) {
 		}
 	}
 	
+	this.grow = function(amount) {
+		_tail_size += amount;
+	}
+
+	this.resetTailSize = function() {
+		_tail_size = 5;
+	}
+
 	this.getId = function() {
 		return _id;
 	}
