@@ -1,4 +1,5 @@
 var snakes = require('../snakes.js');
+var topologies = require('../topologies.js');
 
 describe("player", function() {
 
@@ -105,4 +106,15 @@ describe("player", function() {
 		expect(player.getTailSize()).toEqual(5);
 	});
 	
+});
+
+describe("world", function() {
+	
+	it("world size is calculated ok from a topology", function() {
+		var topo = topologies.getDefault();
+		var world = snakes.createWorld(topo);
+
+		expect(world.getSize().h).toEqual(topo.grid.length);
+		expect(world.getSize().w).toEqual(topo.grid[0].length);
+	});
 });

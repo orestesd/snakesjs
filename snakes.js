@@ -64,7 +64,23 @@ var Player = function(id, name) {
 	}
 }
 
+
+/*** WORLD ***/
+
+var World = function(topology) {
+	var _grid = topology.grid;
+    var _size = {h:_grid.length, w:_grid[0].length};
+
+	this.getSize = function() {
+		return _size;
+	}
+}
+
+
+
 function createPlayer(id, name) {return new Player(id, name)};
+function createWorld(topo) {return new World(topo)};
 
 exports.createPlayer = createPlayer;
+exports.createWorld = createWorld;
 exports.DIRECTIONS = DIRECTIONS;
