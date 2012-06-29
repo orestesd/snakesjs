@@ -11,7 +11,7 @@ describe("player", function() {
 		expect(player.getName()).toEqual('john');
 	});
 	
-	it("the snake changes direction with four keys (default direction = UP)", function() {
+	it("the snake can turn left or right  (default direction = UP)", function() {
 		var player = snakes.createPlayer(1, 'john');
 		
 		expect(player.getDirection()).toEqual(snakes.DIRECTIONS.UP);
@@ -43,4 +43,12 @@ describe("player", function() {
 		expect(player.getDirection()).toEqual(snakes.DIRECTIONS.UP);
 		
 	});
+	
+	it("the snake has a head position", function() {
+		var player = snakes.createPlayer(1, 'john');
+
+		player.moveTo([1, 2]);
+		expect(player.getHeadPosition()).toEqual([1, 2]);
+	});
+	
 });
