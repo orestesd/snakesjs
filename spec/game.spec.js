@@ -50,5 +50,27 @@ describe("player", function() {
 		player.moveTo([1, 2]);
 		expect(player.getHeadPosition()).toEqual([1, 2]);
 	});
-	
+
+	it("the snake can move step by step and the body follow the head", function() {
+		var player = snakes.createPlayer(1, 'john');
+		
+		expect(player.getTailSize()).toEqual(5);
+		expect(player.getPositions().length).toEqual(0);
+		
+        player.moveTo([1, 2]);
+        player.moveTo([1, 3]);
+        player.moveTo([1, 4]);
+        player.moveTo([1, 5]);
+        player.moveTo([1, 6]);
+        player.moveTo([1, 7]);
+        
+		expect(player.getHeadPosition()).toEqual([1, 7]);
+		expect(player.getPositions().length).toEqual(5);
+		expect(player.getPositions()[0]).toEqual([1, 3]);
+
+		// move to the same position is not a move
+        player.moveTo([1, 7]);
+		expect(player.getPositions().length).toEqual(5);
+		expect(player.getPositions()[0]).toEqual([1, 3]);
+	});	
 });
