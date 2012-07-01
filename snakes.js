@@ -1,5 +1,6 @@
 
 var DIRECTIONS = {UP:0, RIGHT:1, BOTTOM:2, LEFT:3}
+var TILE_TYPES = {EMPTY:0, WALL:1}
 
 /*** PLAYER ***/
 
@@ -74,6 +75,10 @@ var World = function(topology) {
 	this.getSize = function() {
 		return _size;
 	}
+	
+	this.getTile = function(pos) {
+		return _grid[pos[0]][pos[1]];
+	}
 }
 
 
@@ -84,3 +89,5 @@ function createWorld(topo) {return new World(topo)};
 exports.createPlayer = createPlayer;
 exports.createWorld = createWorld;
 exports.DIRECTIONS = DIRECTIONS;
+exports.TILE_TYPES = TILE_TYPES;
+

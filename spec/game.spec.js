@@ -111,10 +111,20 @@ describe("player", function() {
 describe("world", function() {
 	
 	it("world size is calculated ok from a topology", function() {
-		var topo = topologies.getDefault();
+		var topo = topologies.get('walled');
 		var world = snakes.createWorld(topo);
 
 		expect(world.getSize().h).toEqual(topo.grid.length);
 		expect(world.getSize().w).toEqual(topo.grid[0].length);
 	});
+	
+	it("world can return the type of the position x,y", function() {
+		var topo = topologies.getAll().walled;
+		var world = snakes.createWorld(topo);
+
+		expect(world.getTile([0,1])).toEqual(snakes.TILE_TYPES.WALL);
+		expect(world.getTile([3,11])).toEqual(snakes.TILE_TYPES.WALL);
+		expect(world.getTile([1,2])).toEqual(snakes.TILE_TYPES.EMPTY);
+	});
+	
 });
