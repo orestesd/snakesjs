@@ -21,6 +21,8 @@ world
 	
 	world can return the type of the position x,y
 	
+	world puts players in their initial positions
+	
 	world handles player moves
 		if the player hits a wall, he won't be moved
 		if the player hits a wall player.max_stops() consecutive steps, the player will dead

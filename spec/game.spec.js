@@ -120,4 +120,51 @@ describe("world", function() {
 		expect(world.getTile([1,2])).toEqual(snakes.TILE_TYPES.EMPTY);
 	});
 	
+	describe("world handles player moves", function() {
+
+		var player_a, player_b;
+	
+		beforeEach(function() {
+			player_a = snakes.createPlayer(1, 'john');
+			player_b = snakes.createPlayer(2, 'paul');
+		});
+
+		it("world places players in their initial positions", function() {
+			world.placePlayers([player_a, player_b]);
+			
+			expect(player_a.getHeadPosition()).toEqual([6,6]);
+			expect(player_b.getHeadPosition()).toEqual([6,34]);
+		});
+		
+		it("the world can move a player based in his direction", function() {
+			world.placePlayers([player_a, player_b]);
+			
+			// player's position [6,6] and player's direction is up
+			world.move(player_a);
+			expect(player_a.getHeadPosition()).toEqual([5,6]);
+			
+			player_a.turn(snakes.DIRECTIONS.RIGHT);
+			world.move(player_a);
+			expect(player_a.getHeadPosition()).toEqual([5,7]);
+			
+			player_a.turn(snakes.DIRECTIONS.RIGHT);
+			world.move(player_a);
+			expect(player_a.getHeadPosition()).toEqual([6,7]);
+			
+			player_a.turn(snakes.DIRECTIONS.RIGHT);
+			world.move(player_a);
+			expect(player_a.getHeadPosition()).toEqual([6,6]);
+		});
+		
+		it("if the player hits a wall, he won't be moved", function() {
+			// player's direction is up
+			player_a.setHeadPosition([1,2]);
+			world.move(player_a);
+			expect(player_a.getHeadPosition()).toEqual([1,2]);
+		});
+		
+		it("if the player hits another snake, he won't be moved", function() {
+			
+		});
+	});
 });
