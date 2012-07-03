@@ -127,17 +127,18 @@ describe("world", function() {
 		beforeEach(function() {
 			player_a = snakes.createPlayer(1, 'john');
 			player_b = snakes.createPlayer(2, 'paul');
+
+			world.init([player_a, player_b]);
 		});
 
 		it("world places players in their initial positions", function() {
-			world.placePlayers([player_a, player_b]);
-			
 			expect(player_a.getHeadPosition()).toEqual([6,6]);
 			expect(player_b.getHeadPosition()).toEqual([6,34]);
 		});
 		
 		it("the world can move a player based in his direction", function() {
-			world.placePlayers([player_a, player_b]);
+			player_a.grow(-4)
+			world.init([player_a, player_b]);
 			
 			// player's position [6,6] and player's direction is up
 			world.move(player_a);
@@ -164,6 +165,13 @@ describe("world", function() {
 		});
 		
 		it("if the player hits another snake, he won't be moved", function() {
+			player_a.setHeadPosition([3,2]);
+			player_b.setHeadPosition([3,3]);
+			
+			player_b.turn(snakes.DIRECTIONS.LEFT);
+			world.move(player_b);
+
+			expect(player_b.getHeadPosition()).toEqual([3,3]);
 			
 		});
 	});

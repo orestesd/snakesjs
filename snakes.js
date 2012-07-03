@@ -82,18 +82,34 @@ var World = function(topology) {
 	var _topology = topology;
 	var _grid = topology.grid;
     var _size = {h:_grid.length, w:_grid[0].length};
-	
-	
-	this.placePlayers = function(players) {
+	var _players = {};
+
+	this.init = function(players) {
 		for(var i = 0; i < players.length; i++) {
-			players[i].setHeadPosition(_topology.initial_pos[i]);
+			var p = players[i];
+			p.setHeadPosition(_topology.initial_pos[i]);
+			_players[p.getId()] = p;
 		}
 	}
 	
 	this.move = function(player) {
 		var next_position = calculateNextPosition.call(this, player.getHeadPosition(), player.getDirection());
+		
+		for (var id in _players) {
+			var p = _players[id];
+			var poss = p.getPositions();
+			
+			for (var j in poss) {
+				var pos = poss[j];
+				if (pos[0] === next_position[0] && pos[1] === next_position[1])
+					return;
+			}
+		}
+		
 		player.moveTo(next_position);
 		
+		_players[player.id] = player;
+
 		function calculateNextPosition(current, direction) {
 			var new_position = [current[0], current[1]];
 			if (direction == DIRECTIONS.BOTTOM) {
