@@ -10,7 +10,10 @@ var Player = function(id, name) {
 	
 	var _direction = DIRECTIONS.UP;
 	var _speed = 1;
-	
+
+	var _max_dead = 5;
+	var _dead_count = 0;
+
 	var _tail_size = 5;
 	var _positions = [];
 
@@ -35,6 +38,8 @@ var Player = function(id, name) {
 			while(_positions.length > _tail_size) {
 				_positions.shift();
 			}
+		} else {
+			_dead_count += 1;
 		}
 	}
 	
@@ -44,6 +49,10 @@ var Player = function(id, name) {
 
 	this.resetTailSize = function() {
 		_tail_size = 5;
+	}
+
+	this.isDead = function() {
+		return _dead_count >= _max_dead;
 	}
 
 	this.getId = function() {
@@ -73,6 +82,10 @@ var Player = function(id, name) {
 	this.getPositions = function() {
 		return _positions;
 	}
+
+	this.getMaxLife = function() {
+		return _max_dead;
+	}
 }
 
 
@@ -101,8 +114,9 @@ var World = function(topology) {
 			
 			for (var j in poss) {
 				var pos = poss[j];
-				if (pos[0] === next_position[0] && pos[1] === next_position[1])
-					return;
+				if (pos[0] === next_position[0] && pos[1] === next_position[1]) {
+					next_position = player.getHeadPosition();
+				}
 			}
 		}
 		

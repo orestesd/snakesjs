@@ -174,5 +174,17 @@ describe("world", function() {
 			expect(player_b.getHeadPosition()).toEqual([3,3]);
 			
 		});
+
+		it("if the player hits a wall X consecutive steps, the player will dead", function() {
+			// player's direction is up
+			player_a.setHeadPosition([1,2]);
+
+			for (var i = 0; i < player_a.getMaxLife(); i++) {
+				expect(player_a.isDead()).toEqual(false);
+				world.move(player_a);
+			};
+			
+			expect(player_a.isDead()).toEqual(true);
+		});
 	});
 });
