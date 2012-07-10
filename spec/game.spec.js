@@ -98,7 +98,7 @@ describe("player", function() {
 		player.resetTailSize();
 		expect(player.getTailSize()).toEqual(5);
 	});
-	
+
 });
 
 describe("world", function() {
@@ -186,5 +186,43 @@ describe("world", function() {
 			
 			expect(player_a.isDead()).toEqual(true);
 		});
+	});
+
+});
+
+describe("item", function() {
+	
+	var player;
+	
+	beforeEach(function() {
+		player = snakes.createPlayer(1, 'john');
+	});
+
+	it("if the player eats a item, the item action is performed", function() {
+		var item = snakes.items[0];
+		spyOn(item, 'action');
+
+		player.feed(item);
+
+		expect(item.action).toHaveBeenCalled();
+
+	});
+
+	it("item grow", function() {
+		var item = snakes.items[0];
+		expect(item.name).toEqual('grow');
+
+		expect(player.getTailSize()).toEqual(5);
+		player.feed(item);
+		expect(player.getTailSize()).toEqual(7);
+	});
+
+	it("item shrink", function() {
+		var item = snakes.items[1];
+		expect(item.name).toEqual('shrink');
+
+		expect(player.getTailSize()).toEqual(5);
+		player.feed(item);
+		expect(player.getTailSize()).toEqual(3);
 	});
 });

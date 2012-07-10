@@ -1,6 +1,7 @@
 
 var DIRECTIONS = {UP:0, RIGHT:1, BOTTOM:2, LEFT:3}
 var TILE_TYPES = {EMPTY:0, WALL:1}
+var ITEM_TYPES = {GROW:-1, SHRINK:-2};
 
 /*** PLAYER ***/
 
@@ -43,6 +44,10 @@ var Player = function(id, name) {
 		}
 	}
 	
+	this.feed = function(item) {
+		item.action.call(this);
+	}
+
 	this.grow = function(amount) {
 		_tail_size += amount;
 	}
@@ -96,6 +101,7 @@ var World = function(topology) {
 	var _grid = topology.grid;
     var _size = {h:_grid.length, w:_grid[0].length};
 	var _players = {};
+	var _items = [];
 
 	this.init = function(players) {
 		for(var i = 0; i < players.length; i++) {
@@ -105,6 +111,19 @@ var World = function(topology) {
 		}
 	}
 	
+	this.putItems = function (number) {
+		var n = number || 4;
+		for (var i = 0; i < n; i++) {
+			var type = - (random(1, 2));
+			var pos = [random(0, _size.h), random(0, _size.w)];
+			_items.push({type: type, pos:pos});
+		}
+
+		function random(a, b) {
+			return Math.round(Math.random()*(b-a)+a);
+		}
+	}
+
 	this.move = function(player) {
 		var next_position = calculateNextPosition.call(this, player.getHeadPosition(), player.getDirection());
 		
@@ -156,13 +175,24 @@ var World = function(topology) {
 	}
 }
 
-
+var items = [
+	{  	name : 'grow',
+		action: function() {
+			this.grow(2);
+		}
+	},
+	{  	name : 'shrink',
+		action: function() {
+			this.grow(-2);
+		}
+	}
+]
 
 function createPlayer(id, name) {return new Player(id, name)};
 function createWorld(topo) {return new World(topo)};
 
 exports.createPlayer = createPlayer;
 exports.createWorld = createWorld;
+exports.items = items;
 exports.DIRECTIONS = DIRECTIONS;
 exports.TILE_TYPES = TILE_TYPES;
-
