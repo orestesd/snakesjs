@@ -186,6 +186,17 @@ describe("world", function() {
 			
 			expect(player_a.isDead()).toEqual(true);
 		});
+
+		it("the world place items", function() {
+			var items = world.putItems();
+			expect(items.length).toEqual(5);
+
+			for (var i = 0; items < items.length; i++) {
+				var it = items[i];
+				expect(it.pos[0]).toBeLessThan(world.getSize().h)
+				expect(it.pos[1]).toBeLessThan(world.getSize().w)
+			};
+		});
 	});
 
 });

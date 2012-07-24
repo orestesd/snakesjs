@@ -112,12 +112,14 @@ var World = function(topology) {
 	}
 	
 	this.putItems = function (number) {
-		var n = number || 4;
+		var n = number || 5;
 		for (var i = 0; i < n; i++) {
 			var type = - (random(1, 2));
 			var pos = [random(0, _size.h), random(0, _size.w)];
 			_items.push({type: type, pos:pos});
 		}
+
+		return _items;
 
 		function random(a, b) {
 			return Math.round(Math.random()*(b-a)+a);
