@@ -1,5 +1,6 @@
-var snakes = require('../snakes.js');
-var topologies = require('../topologies.js');
+var basedir = '../../';
+var snakes = require(basedir + 'snakes.js');
+var topologies = require(basedir + 'topologies.js');
 
 describe("player", function() {
 	var player;
