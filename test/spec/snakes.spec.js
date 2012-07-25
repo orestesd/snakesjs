@@ -221,9 +221,11 @@ describe("item", function() {
 	it("if the player eats a item, the item action is performed", function() {
 		var item = snakes.items[0];
 		var spy = chai.spy(item.action);
+		item.action = spy;
 
 		player.feed(item);
 
+		expect(item.action).to.be.spy;
 		expect(spy).to.have.been.called;
 
 	});
