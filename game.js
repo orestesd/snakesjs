@@ -10,6 +10,7 @@ var Game = function(world) {
 	this.step = function() {
 		if (this.isStarted()) {
 			_age += 1;
+			_world.moveAll();
 		}
 	}
 

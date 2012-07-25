@@ -126,6 +126,12 @@ var World = function(topology) {
 		}
 	}
 
+	this.moveAll = function() {
+		for (var id in _players) {
+			this.move(_players[id]);
+		}
+	}
+
 	this.move = function(player) {
 		var next_position = calculateNextPosition.call(this, player.getHeadPosition(), player.getDirection());
 		

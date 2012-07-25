@@ -145,6 +145,22 @@ describe("[world]", function() {
 			expect(player_b.getHeadPosition()).to.deep.equal([6,34]);
 		});
 		
+		it("word moveAll moves all players", function() {
+			var spy_world = chai.spy(world.move);
+			var spy_player_a = chai.spy(player_a.moveTo);
+			var spy_player_b = chai.spy(player_b.moveTo);
+			world.move = spy_world;
+			player_a.moveTo = spy_player_a;
+			player_b.moveTo = spy_player_b;
+
+			world.init([player_a, player_b]);
+
+			world.moveAll();
+			expect(spy_world).to.have.been.called.twice;
+			expect(spy_player_a).to.have.been.called.once;
+			expect(spy_player_b).to.have.been.called.once;
+		});
+
 		it("the world can move a player based in his direction", function() {
 			player_a.grow(-4)
 			world.init([player_a, player_b]);

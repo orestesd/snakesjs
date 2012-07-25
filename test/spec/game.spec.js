@@ -100,7 +100,24 @@ describe("[running a game]", function() {
 		expect(game.getAge()).to.be.equal(0);	
 	});
 
-	it("every game step, make players moving");
+	it("every game step, makes world moving", function() {
+		var player_a = snakes.createPlayer(1, 'john');
+		var player_b = snakes.createPlayer(2, 'paul');
+
+		var world_move_spy = chai.spy(world.moveAll);
+		world.moveAll = world_move_spy;
+
+		game.addPlayer(player_a);
+		game.addPlayer(player_b);
+		game.start();
+		
+		game.step();
+		expect(world_move_spy).to.have.been.called.once;
+
+		game.step();
+		expect(world_move_spy).to.have.been.called.twice;
+
+	});
 });
 
 
