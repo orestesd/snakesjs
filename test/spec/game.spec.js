@@ -20,7 +20,7 @@ beforeEach(function() {
 });
 
 
-describe("creating a game", function() {
+describe("[creating a game]", function() {
 	
 	it("a game is created with a world", function() {
 		expect(game.getWorld()).exist
@@ -32,7 +32,7 @@ describe("creating a game", function() {
 
 });
 
-describe("starting a game", function() {
+describe("[starting a game]", function() {
 	
 	it("a game can be started", function() {
 		game.start();
@@ -53,7 +53,7 @@ describe("starting a game", function() {
 	it("a player can't be added to a started world", function() {
 		var player_a = snakes.createPlayer(1, 'john');
 		var player_b = snakes.createPlayer(2, 'paul');
-		
+
 		game.addPlayer(player_a);
 		game.start();
 		game.addPlayer(player_b);
@@ -85,7 +85,7 @@ describe("starting a game", function() {
 });
 
 
-describe("running a game", function() {
+describe("[running a game]", function() {
 	
 	it("an started game can be step runned", function() {
 		expect(game.getAge()).to.be.equal(0);
@@ -99,15 +99,17 @@ describe("running a game", function() {
 		game.step();
 		expect(game.getAge()).to.be.equal(0);	
 	});
+
+	it("every game step, make players moving");
 });
 
 
-describe("commands", function() {
+describe("[commands]", function() {
 	
 	beforeEach(function() {
 	});
 
-	it("expect", function() {
+	it("an started game pipes commands to world players");
 
-	});
+	it("a not started game does't pipes commands to world players");
 });

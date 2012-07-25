@@ -10,7 +10,7 @@ before(function() {
 	chai.use(spies);
 });
 
-describe("player", function() {
+describe("[player]", function() {
 	var player;
 	
 	beforeEach(function() {
@@ -110,7 +110,7 @@ describe("player", function() {
 
 });
 
-describe("world", function() {
+describe("[world]", function() {
 	var topo, world;
 		
 	beforeEach(function() {
@@ -129,7 +129,7 @@ describe("world", function() {
 		expect(world.getTile([1,2])).to.equal(snakes.TILE_TYPES.EMPTY);
 	});
 	
-	describe("world handles player moves", function() {
+	describe("[world handles player moves]", function() {
 
 		var player_a, player_b;
 	
@@ -210,7 +210,7 @@ describe("world", function() {
 
 });
 
-describe("item", function() {
+describe("[item]", function() {
 	
 	var player;
 	
