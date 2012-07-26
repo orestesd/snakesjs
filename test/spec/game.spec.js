@@ -123,10 +123,38 @@ describe("[running a game]", function() {
 
 describe("[commands]", function() {
 	
+	var player_a, player_b;
+
 	beforeEach(function() {
+		player_a = snakes.createPlayer(1, 'john');
+		player_b = snakes.createPlayer(2, 'paul');
+		game.addPlayer(player_a);
+		game.addPlayer(player_b);
 	});
 
-	it("an started game pipes commands to world players");
+	it("an started game pipes commands to world players", function() {
+		var spy = chai.spy(player_a.turn);
+		player_a.turn = spy;
 
-	it("a not started game does't pipes commands to world players");
+		game.start();
+		game.command({player:1, dir:snakes.DIRECTIONS.LEFT});
+
+		expect(spy).to.have.been.called.once;
+
+	});
+
+	it("a not started game does't pipes commands to world players", function() {
+		var spy = chai.spy(player_a.turn);
+		player_a.turn = spy;
+
+		game.command({player:1, dir:snakes.DIRECTIONS.LEFT});
+
+		expect(spy).not.to.have.been.called.once;
+	});
+
+	it("a unexistent player id in a command don't fail", function() {
+		game.start();
+		game.command({player:0, dir:snakes.DIRECTIONS.LEFT});
+
+	});
 });

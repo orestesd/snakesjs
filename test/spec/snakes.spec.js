@@ -128,7 +128,7 @@ describe("[world]", function() {
 		expect(world.getTile([3,11])).to.equal(snakes.TILE_TYPES.WALL);
 		expect(world.getTile([1,2])).to.equal(snakes.TILE_TYPES.EMPTY);
 	});
-	
+
 	describe("[world handles player moves]", function() {
 
 		var player_a, player_b;
@@ -138,6 +138,10 @@ describe("[world]", function() {
 			player_b = snakes.createPlayer(2, 'paul');
 
 			world.init([player_a, player_b]);
+		});
+
+		it("world can return a player", function() {
+			expect(world.getPlayer(1)).to.deep.equal(player_a);
 		});
 
 		it("world places players in their initial positions", function() {

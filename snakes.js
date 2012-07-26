@@ -181,6 +181,10 @@ var World = function(topology) {
 	this.getTile = function(pos) {
 		return _grid[pos[0]][pos[1]];
 	}
+
+	this.getPlayer = function(id) {
+		return _players[id];
+	}
 }
 
 var items = [

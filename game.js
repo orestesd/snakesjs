@@ -7,6 +7,13 @@ var Game = function(world) {
 	var _status = -1;
 	var _age = 0;
 
+	this.command = function(cmd) {
+		var player = _world.getPlayer(cmd.player);
+		if (player) {
+			player.turn(cmd.dir);
+		}
+	}
+
 	this.step = function() {
 		if (this.isStarted()) {
 			_age += 1;
