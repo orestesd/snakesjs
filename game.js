@@ -1,5 +1,7 @@
 
 var Game = function(world) {
+	var MIN_PLAYERS = 1;
+	var MAX_PLAYERS = 2;
 
 	var _world = world;
 	var _id = random(100000, 999999);
@@ -22,14 +24,14 @@ var Game = function(world) {
 	}
 
 	this.start = function() {
-		if (! this.isStarted()) {
+		if (! this.isStarted() && _players.length >= MIN_PLAYERS) {
 			_world.init(_players);
 			_status = 1;	
 		}
 	}
 
 	this.addPlayer = function(player) {
-		if (! this.isStarted()) {
+		if (! this.isStarted() && _players.length < MAX_PLAYERS) {
 			_players.push(player);
 		}
 	}
@@ -52,6 +54,14 @@ var Game = function(world) {
 
 	this.isStarted = function() {
 		return _status !== -1;
+	}
+
+	this.getMinPlayers = function() {
+		return MIN_PLAYERS;
+	}
+
+	this.getMaxPlayers = function() {
+		return MAX_PLAYERS;
 	}
 
 	// FIXME duplicate code

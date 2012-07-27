@@ -32,14 +32,8 @@ describe("[creating a game]", function() {
 
 });
 
-describe("[starting a game]", function() {
+describe("[starting a game and adding players]", function() {
 	
-	it("a game can be started", function() {
-		game.start();
-		expect(game.isStarted()).to.be.true;
-	});
-
-
 	it("a player can be added to a not started game", function() {
 		var player_a = snakes.createPlayer(1, 'john');
 		var player_b = snakes.createPlayer(2, 'paul');
@@ -61,12 +55,34 @@ describe("[starting a game]", function() {
 		expect(game.getPlayers()).to.have.length(1)
 	});
 
+	it("a full game doesn't accept more players", function() {
+
+		for (var i = 1; i <= game.getMaxPlayers(); i++) {
+			var player = snakes.createPlayer(i, 'player_' + i);
+			game.addPlayer(player);
+		};
+
+		expect(game.getPlayers()).to.have.length(game.getMaxPlayers());		
+		game.addPlayer(snakes.createPlayer(-1, 'not_added_player'));
+		expect(game.getPlayers()).to.have.length(game.getMaxPlayers())
+	});
+
+	it("a game can't be started until the num of players added has reached the min num of players", function() {
+
+		for (var i = 0; i < game.getMinPlayers() - 1; i++) {
+			var player = snakes.createPlayer(i, 'player_' + i);
+			game.addPlayer(player);
+		};
+
+		game.start();
+		expect(game.isStarted()).to.be.false;
+	});
+
 	it("when the game is started, the world is initialized", function() {
 		var world_init_spy = chai.spy(world.init);
 		world.init = world_init_spy;
 
-		expect(world.init).to.be.spy;
-		expect(world.init).to.be.spy;
+		game.addPlayer(snakes.createPlayer(1, 'john'));
 		game.start();
 
 		expect(world_init_spy).to.have.been.called.once;
@@ -76,6 +92,7 @@ describe("[starting a game]", function() {
 		var world_init_spy = chai.spy(world.init);
 		world.init = world_init_spy;
 
+		game.addPlayer(snakes.createPlayer(1, 'john'));
 		game.start();
 		game.start();
 
@@ -89,6 +106,7 @@ describe("[running a game]", function() {
 	
 	it("an started game can be step runned", function() {
 		expect(game.getAge()).to.be.equal(0);
+		game.addPlayer(snakes.createPlayer(1, 'john'));
 		game.start();
 		game.step();
 		expect(game.getAge()).to.be.equal(1);		
