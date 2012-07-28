@@ -28,13 +28,41 @@ describe("[connections]", function() {
 			client.disconnect();
 			done();
 		});
-		
 	
 		client.emit('register', {name:'john'});
 		
 	});
 
-	it("a registered client can create a new game");
+	it("a registered client can create a new game", function(done) {
+		client.on('registered', function(user) {
+			client.emit('create-game');
+		});
+		
+		client.on('game-created', function(game) {
+			expect(game.id).to.be.defined;
+			client.disconnect();
+			done();
+		});
+
+		client.emit('register', {name:'john'});
+	});
+
+	it("a unregistered client can't create a new game", function(done) {
+		
+		client.on('game-created', function(game) {
+			expect(true).to.be.false;
+			client.disconnect();
+			done();
+		});
+
+		client.on('error', function(error) {
+			expect(error.msg).to.be.defined;
+			client.disconnect();
+			done();
+		});
+
+		client.emit('create-game');
+	});
 
 	it("a registered client can join a not full game");
 
