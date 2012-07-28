@@ -1,8 +1,7 @@
 var chai = require('chai'),
 	expect = require('chai').expect,
-	spies = require('chai-spies');
-
-var io = require('socket.io-client');
+	spies = require('chai-spies'), 
+	io = require('socket.io-client');
 
 var basedir = '../../';
 var server = require(basedir + 'server.js');
@@ -16,61 +15,65 @@ var options ={
 
 describe("[connections]", function() {
 
-	var client;
+	var client_a, client_b;
 
 	beforeEach(function() {
-		client = io.connect(socketURL, options);
+		client_a = io.connect(socketURL, options);
 	});
 
 	it("a client can register itself with a name", function(done) {
-		client.on('registered', function(user) {
+		client_a.on('registered', function(user) {
 			expect(user.name).to.be.equal('john');
-			client.disconnect();
+			client_a.disconnect();
 			done();
 		});
 	
-		client.emit('register', {name:'john'});
+		client_a.emit('register', {name:'john'});
 		
 	});
 
 	it("a registered client can create a new game", function(done) {
-		client.on('registered', function(user) {
-			client.emit('create-game');
+		client_a.on('registered', function(user) {
+			client_a.emit('create-game');
 		});
 		
-		client.on('game-created', function(data) {
+		client_a.on('game-created', function(data) {
 			expect(data.gameid).to.be.defined;
 
 			var game = server.getGame(data.gameid);
 			expect(game.id).equal(data.gameid);
 
-			client.disconnect();
+			client_a.disconnect();
 			done();
 		});
 
-		client.emit('register', {name:'john'});
+		client_a.emit('register', {name:'john'});
 	});
 
 	it("a unregistered client can't create a new game", function(done) {
 		
-		client.on('game-created', function(game) {
+		client_a.on('game-created', function(game) {
 			expect(true).to.be.false;
-			client.disconnect();
+			client_a.disconnect();
 			done();
 		});
 
-		client.on('error', function(error) {
+		client_a.on('error', function(error) {
 			expect(error.msg).to.be.defined;
-			client.disconnect();
+			client_a.disconnect();
 			done();
 		});
 
-		client.emit('create-game');
+		client_a.emit('create-game');
 	});
 
 	it("a registered client can join a not full game");
 
-	it("when a client join a game, other gamers are notified");
+	it("a registered client can't join a full game");
+
+	it("when a client join a game, clients in same game are notified");
+
+	it("when a client join a game, clients in different game aren't notified");
 
 	it("a game creator can start it");
 
@@ -78,5 +81,6 @@ describe("[connections]", function() {
 
 	it("a client can send commands to the game");
 
-	it("a client receive game status");
+	it("all client receive game status");
 });
+
