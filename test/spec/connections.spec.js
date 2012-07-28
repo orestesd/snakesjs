@@ -38,8 +38,12 @@ describe("[connections]", function() {
 			client.emit('create-game');
 		});
 		
-		client.on('game-created', function(game) {
-			expect(game.id).to.be.defined;
+		client.on('game-created', function(data) {
+			expect(data.gameid).to.be.defined;
+
+			var game = server.getGame(data.gameid);
+			expect(game.id).equal(data.gameid);
+
 			client.disconnect();
 			done();
 		});
