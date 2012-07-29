@@ -13,7 +13,7 @@ var update_game_freq = 1000 / 5;
 io.set('log level', 1);
 io.sockets.on('connection', function (socket) {
   
-  var client_name;
+  var name;
   var player;
   var game;
   var updateClientsInterval;
@@ -21,39 +21,46 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('register', function(user){
 
-	client_name = user.name;
+    console.log('[%s] registering user %s', socket.id, user.name);
 
-  	socket.emit('registered', {client_id:socket.id, name:client_name}); 
+    name = user.name;
+
+  	socket.emit('registered', {client_id:socket.id, name:name}); 
 
   });
 
   socket.on('create-game', function(user){
   	
-  	if (client_name) {
+  	if (name) {
 
-		game = createGame(socket.id);
-		player = snakes.createPlayer(socket.id, client_name);
-		game.addPlayer(player);
+  		game = createGame(socket.id);
+  		player = snakes.createPlayer(socket.id, name);
+  		game.addPlayer(player);
 
-		socket.join(game.id);
-  		socket.emit('game-created', {game_id:game.id}); 
+  		socket.join(game.id);
+    	socket.emit('game-created', {game_id:game.id}); 
 
-	} else {
-		socket.emit('error', {msg:"unregistered client can't create a game"})
-	}
+      console.log('[%s] created game %s', socket.id, game.id);
+
+    } else {
+		  socket.emit('error', {msg:"unregistered client can't create a game"})
+    }
 
   });
 
   socket.on('join-game', function(game_id){
   	var joined_game = getGame(game_id);
   	if (joined_game && ! joined_game.isStarted()) {
-  		game = joined_game;
-  		player = snakes.createPlayer(socket.id, client_name);
+  		
+      game = joined_game;
+  		player = snakes.createPlayer(socket.id, name);
 		  game.addPlayer(player);
 
   		socket.join(game.id);
   		io.sockets.in(game.id).emit('game-joined', {game_id:game.id, player_names: game.getPlayerNames()}); // for himself too
   		// socket.broadcast.to(game.id).emit('game-joined', {game_id:game.id}); // not for himself
+
+      console.log('[%s] joined game %s', socket.id, game.id);
   	} else {
       socket.emit('error', {msg:"can't join a started game"})
     }
@@ -67,6 +74,8 @@ io.sockets.on('connection', function (socket) {
       
       updateGameInterval = initUpdateGameInterval(game);
       updateClientsInterval = initUpdateClientsInterval(game);
+
+      console.log('[%s] started game %s', socket.id, game.id);
     } else {
       socket.emit('error', {msg:"only the game creator cant start the game"})
     }
