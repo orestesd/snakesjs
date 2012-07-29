@@ -1,5 +1,5 @@
 
-var io = require('socket.io').listen(5000);
+
 
 var gamejs = require('./game.js'),
 	snakes = require('./snakes.js'),
@@ -10,75 +10,77 @@ var games = {};
 var update_clients_freq = 1000 / 5;
 var update_game_freq = 1000 / 5;
 
-io.set('log level', 1);
-io.sockets.on('connection', function (socket) {
-  
-  var client_name;
-  var player;
-  var game;
-  var updateClientsInterval;
-  var updateGameInterval;
+function init_io(io){
+  io.set('log level', 1);
+  io.sockets.on('connection', function (socket) {
+    
+    var client_name;
+    var player;
+    var game;
+    var updateClientsInterval;
+    var updateGameInterval;
 
-  socket.on('register', function(user){
+    socket.on('register', function(user){
 
-	client_name = user.name;
+    client_name = user.name;
 
-  	socket.emit('registered', {client_id:socket.id, name:client_name}); 
+      socket.emit('registered', {client_id:socket.id, name:client_name}); 
 
-  });
+    });
 
-  socket.on('create-game', function(user){
-  	
-  	if (client_name) {
-
-		game = createGame(socket.id);
-		player = snakes.createPlayer(socket.id, client_name);
-		game.addPlayer(player);
-
-		socket.join(game.id);
-  		socket.emit('game-created', {game_id:game.id}); 
-
-	} else {
-		socket.emit('error', {msg:"unregistered client can't create a game"})
-	}
-
-  });
-
-  socket.on('join-game', function(game_id){
-  	var joined_game = getGame(game_id);
-  	if (joined_game && ! joined_game.isStarted()) {
-  		game = joined_game;
-  		player = snakes.createPlayer(socket.id, client_name);
-		  game.addPlayer(player);
-
-  		socket.join(game.id);
-  		io.sockets.in(game.id).emit('game-joined', {game_id:game.id, player_names: game.getPlayerNames()}); // for himself too
-  		// socket.broadcast.to(game.id).emit('game-joined', {game_id:game.id}); // not for himself
-  	} else {
-      socket.emit('error', {msg:"can't join a started game"})
-    }
-  
-  });
-
-  socket.on('start-game', function(){
-    if (game && game.owner === socket.id) {
-      game.start();
-      io.sockets.in(game.id).emit('game-started');
+    socket.on('create-game', function(user){
       
-      updateGameInterval = initUpdateGameInterval(game);
-      updateClientsInterval = initUpdateClientsInterval(game);
+      if (client_name) {
+
+      game = createGame(socket.id);
+      player = snakes.createPlayer(socket.id, client_name);
+      game.addPlayer(player);
+
+      socket.join(game.id);
+        socket.emit('game-created', {game_id:game.id}); 
+
     } else {
-      socket.emit('error', {msg:"only the game creator cant start the game"})
+      socket.emit('error', {msg:"unregistered client can't create a game"})
     }
-  });
 
-  socket.on('command', function(command){
-    if (game && player) {
-      player.turn(command.dir);
-    }
-  });
+    });
 
-});
+    socket.on('join-game', function(game_id){
+      var joined_game = getGame(game_id);
+      if (joined_game && ! joined_game.isStarted()) {
+        game = joined_game;
+        player = snakes.createPlayer(socket.id, client_name);
+        game.addPlayer(player);
+
+        socket.join(game.id);
+        io.sockets.in(game.id).emit('game-joined', {game_id:game.id, player_names: game.getPlayerNames()}); // for himself too
+        // socket.broadcast.to(game.id).emit('game-joined', {game_id:game.id}); // not for himself
+      } else {
+        socket.emit('error', {msg:"can't join a started game"})
+      }
+    
+    });
+
+    socket.on('start-game', function(){
+      if (game && game.owner === socket.id) {
+        game.start();
+        io.sockets.in(game.id).emit('game-started');
+        
+        updateGameInterval = initUpdateGameInterval(io, game);
+        updateClientsInterval = initUpdateClientsInterval(io, game);
+      } else {
+        socket.emit('error', {msg:"only the game creator cant start the game"})
+      }
+    });
+
+    socket.on('command', function(command){
+      if (game && player) {
+        player.turn(command.dir);
+      }
+    });
+
+  });
+}
 
 function createGame(owner) {
 	var topo = topologies.getAll().walled;
@@ -96,7 +98,7 @@ function getGame(id) {
 	return games[id];
 } 
 
-function initUpdateClientsInterval(game) {
+function initUpdateClientsInterval(io, game) {
   var freq = 1000 / 5;
   var interval = setInterval(function() {
       var game_status = game.getStatus();
@@ -111,7 +113,7 @@ function initUpdateClientsInterval(game) {
   return interval;
 }
 
-function initUpdateGameInterval(game) {
+function initUpdateGameInterval(io, game) {
   var interval = setInterval(function() {
 
       game.step();
@@ -121,4 +123,10 @@ function initUpdateGameInterval(game) {
   return interval;
 }
 
-exports.getGame = getGame;
+exports.init = function(io){
+  init_io(io);
+
+  return {
+    getGame : getGame
+  };
+}

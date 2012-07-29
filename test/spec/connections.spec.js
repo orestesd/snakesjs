@@ -1,10 +1,11 @@
 var chai = require('chai'),
 	expect = require('chai').expect,
-	spies = require('chai-spies'), 
+	spies = require('chai-spies'),
+	ioserver = require('socket.io').listen(5000);
 	io = require('socket.io-client');
 
 var basedir = '../../';
-var server = require(basedir + 'gameio.js');
+var gameio = require(basedir + 'gameio.js').init(ioserver);
 
 var socketURL = 'http://0.0.0.0:5000';
 
@@ -47,7 +48,7 @@ describe("[single connections]", function() {
 		client.on('game-created', function(data) {
 			expect(data.game_id).to.not.be.undefined;
 
-			var game = server.getGame(data.game_id);
+			var game = gameio.getGame(data.game_id);
 			expect(game.id).equal(data.game_id);
 
 			done();
@@ -80,7 +81,7 @@ describe("[single connections]", function() {
 		
 		client.on('game-created', function(data) {
 
-			var game = server.getGame(data.game_id);
+			var game = gameio.getGame(data.game_id);
 
 			expect(game.getPlayer(client.id)).to.not.be.undefined;
 
@@ -129,7 +130,7 @@ describe("[multiple connections]", function() {
 		client_b.on('game-joined', function(data) {
 			expect(game_id).to.be.equal(data.game_id);
 
-			var game = server.getGame(data.game_id);
+			var game = gameio.getGame(data.game_id);
 			expect(game.getPlayer(client_a.id)).to.not.be.undefined;
 
 			done();
@@ -187,7 +188,7 @@ describe("[multiple connections]", function() {
 		});
 
 		client_a.on('game-started', function(data) {
-			var game = server.getGame(game_id);
+			var game = gameio.getGame(game_id);
 			expect(game.isStarted()).to.be.ok;
 			done();
 		});
@@ -254,7 +255,7 @@ describe("[multiple connections]", function() {
 		});
 
 		client_a.on('game-started', function(data) {
-			var game = server.getGame(game_id);
+			var game = gameio.getGame(game_id);
 			var player = game.getPlayer(client_a.id);
 
 			var spy = chai.spy(player.turn);
