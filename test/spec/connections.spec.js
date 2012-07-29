@@ -6,6 +6,7 @@ var chai = require('chai'),
 
 var basedir = '../../';
 var gameio = require(basedir + 'gameio.js').init(ioserver);
+ioserver.set('log level', 1);
 
 var socketURL = 'http://0.0.0.0:5000';
 
