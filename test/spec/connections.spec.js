@@ -287,7 +287,7 @@ describe("[multiple connections]", function() {
 
 		client_b.on('game-status', function(data) {
 			expect(game_id).to.be.equal(data.game_id);
-			expect(data.players_positions).to.have.length(2);
+			expect(data.player_positions).to.have.length(2);
 			done();
 		});
 

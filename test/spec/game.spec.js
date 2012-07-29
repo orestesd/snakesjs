@@ -104,8 +104,8 @@ describe("[starting a game and adding players]", function() {
 		game.addPlayer(player_b);
 
 		var status = game.getStatus();
-		expect(status.players_positions).to.have.length(2);
-		expect(status.players_positions[0]).to.deep.equal(player_a.getPositions());
+		expect(status.player_positions).to.have.length(2);
+		expect(status.player_positions[0]).to.deep.equal(player_a.getPositions());
 
 	});
 });
