@@ -7,13 +7,17 @@ var gamejs = require('./game.js'),
 
 var games = {};
 
+var update_clients_freq = 1000 / 5;
+var update_game_freq = 1000 / 5;
+
 io.set('log level', 1);
 io.sockets.on('connection', function (socket) {
   
   var client_name;
   var player;
   var game;
-  var updateInterval;
+  var updateClientsInterval;
+  var updateGameInterval;
 
   socket.on('register', function(user){
 
@@ -32,7 +36,7 @@ io.sockets.on('connection', function (socket) {
 		game.addPlayer(player);
 
 		socket.join(game.id);
-  		socket.emit('game-created', {gameid:game.id}); 
+  		socket.emit('game-created', {game_id:game.id}); 
 
 	} else {
 		socket.emit('error', {msg:"unregistered client can't create a game"})
@@ -48,8 +52,8 @@ io.sockets.on('connection', function (socket) {
 		  game.addPlayer(player);
 
   		socket.join(game.id);
-  		io.sockets.in(game.id).emit('game-joined', {gameid:game.id, player_names: game.getPlayerNames()}); // for himself too
-  		// socket.broadcast.to(game.id).emit('game-joined', {gameid:game.id}); // not for himself
+  		io.sockets.in(game.id).emit('game-joined', {game_id:game.id, player_names: game.getPlayerNames()}); // for himself too
+  		// socket.broadcast.to(game.id).emit('game-joined', {game_id:game.id}); // not for himself
   	} else {
       socket.emit('error', {msg:"can't join a started game"})
     }
@@ -60,7 +64,9 @@ io.sockets.on('connection', function (socket) {
     if (game && game.owner === socket.id) {
       game.start();
       io.sockets.in(game.id).emit('game-started');
-      updateInterval = initUpdateClients(game);
+      
+      updateGameInterval = initUpdateGameInterval(game);
+      updateClientsInterval = initUpdateClientsInterval(game);
     } else {
       socket.emit('error', {msg:"only the game creator cant start the game"})
     }
@@ -90,7 +96,7 @@ function getGame(id) {
 	return games[id];
 } 
 
-function initUpdateClients(game) {
+function initUpdateClientsInterval(game) {
   var freq = 1000 / 5;
   var interval = setInterval(function() {
       var game_status = game.getStatus();
@@ -101,6 +107,16 @@ function initUpdateClients(game) {
       io.sockets.in(game.id).emit('game-status', game_status);
   
   }, freq);
+
+  return interval;
+}
+
+function initUpdateGameInterval(game) {
+  var interval = setInterval(function() {
+
+      game.step();
+
+  }, update_game_freq);
 
   return interval;
 }

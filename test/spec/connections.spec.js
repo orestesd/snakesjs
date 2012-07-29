@@ -45,10 +45,10 @@ describe("[single connections]", function() {
 		});
 		
 		client.on('game-created', function(data) {
-			expect(data.gameid).to.not.be.undefined;
+			expect(data.game_id).to.not.be.undefined;
 
-			var game = server.getGame(data.gameid);
-			expect(game.id).equal(data.gameid);
+			var game = server.getGame(data.game_id);
+			expect(game.id).equal(data.game_id);
 
 			done();
 		});
@@ -80,7 +80,7 @@ describe("[single connections]", function() {
 		
 		client.on('game-created', function(data) {
 
-			var game = server.getGame(data.gameid);
+			var game = server.getGame(data.game_id);
 
 			expect(game.getPlayer(client.id)).to.not.be.undefined;
 
@@ -122,14 +122,14 @@ describe("[multiple connections]", function() {
 		var game_id;
 
 		client_a.on('game-created', function(data) {
-			game_id = data.gameid;
+			game_id = data.game_id;
 			client_b.emit('join-game', game_id);
 		});
 
 		client_b.on('game-joined', function(data) {
-			expect(game_id).to.be.equal(data.gameid);
+			expect(game_id).to.be.equal(data.game_id);
 
-			var game = server.getGame(data.gameid);
+			var game = server.getGame(data.game_id);
 			expect(game.getPlayer(client_a.id)).to.not.be.undefined;
 
 			done();
@@ -142,12 +142,12 @@ describe("[multiple connections]", function() {
 		var game_id;
 
 		client_a.on('game-created', function(data) {
-			game_id = data.gameid;
+			game_id = data.game_id;
 			client_b.emit('join-game', game_id);
 		});
 
 		client_a.on('game-joined', function(data) {
-			expect(game_id).to.be.equal(data.gameid);
+			expect(game_id).to.be.equal(data.game_id);
 			expect(data.player_names).to.have.length(2);
 			expect(data.player_names[0]).to.be.equal('john');
 
@@ -163,7 +163,7 @@ describe("[multiple connections]", function() {
 		client_c.emit('create-game');
 
 		client_a.on('game-created', function(data) {
-			client_b.emit('join-game', data.gameid);
+			client_b.emit('join-game', data.game_id);
 		});
 
 		client_c.on('game-joined', function(data) {
@@ -182,7 +182,7 @@ describe("[multiple connections]", function() {
 		var game_id;
 
 		client_a.on('game-created', function(data) {
-			game_id = data.gameid;
+			game_id = data.game_id;
 			client_a.emit('start-game');
 		});
 
@@ -199,7 +199,7 @@ describe("[multiple connections]", function() {
 		var game_id;
 
 		client_a.on('game-created', function(data) {
-			game_id = data.gameid;
+			game_id = data.game_id;
 			client_b.emit('join-game', game_id);
 		});
 
@@ -224,7 +224,7 @@ describe("[multiple connections]", function() {
 		var game_id;
 
 		client_a.on('game-created', function(data) {
-			game_id = data.gameid;
+			game_id = data.game_id;
 			client_a.emit('start-game');
 		});
 
@@ -249,7 +249,7 @@ describe("[multiple connections]", function() {
 		var game_id;
 
 		client_a.on('game-created', function(data) {
-			game_id = data.gameid;
+			game_id = data.game_id;
 			client_a.emit('start-game');
 		});
 
@@ -277,7 +277,7 @@ describe("[multiple connections]", function() {
 		var game_id;
 
 		client_a.on('game-created', function(data) {
-			game_id = data.gameid;
+			game_id = data.game_id;
 			client_b.emit('join-game', game_id);
 		});
 
