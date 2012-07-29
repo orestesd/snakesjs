@@ -12,4 +12,6 @@ var app = http.createServer(app_connect).listen(myserver.port);
 var io = require('socket.io').listen(app),
 	GameIO = new require('./gameio.js').init(io);
 
+io.set('log level', 1);
+
 console.log('server started: ', myserver);

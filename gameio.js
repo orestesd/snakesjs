@@ -11,7 +11,7 @@ var update_clients_freq = 1000 / 5;
 var update_game_freq = 1000 / 5;
 
 function init_io(io){
-  io.set('log level', 1);
+
   io.sockets.on('connection', function (socket) {
     
     var client_name;
@@ -22,7 +22,7 @@ function init_io(io){
 
     socket.on('register', function(user){
 
-    client_name = user.name;
+      client_name = user.name;
 
       socket.emit('registered', {client_id:socket.id, name:client_name}); 
 
