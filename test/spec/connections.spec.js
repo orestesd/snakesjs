@@ -4,7 +4,7 @@ var chai = require('chai'),
 	io = require('socket.io-client');
 
 var basedir = '../../';
-var server = require(basedir + 'server.js');
+var server = require(basedir + 'gameio.js');
 
 var socketURL = 'http://0.0.0.0:5000';
 
