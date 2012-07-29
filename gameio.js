@@ -21,28 +21,25 @@ function init_io(io){
     var updateGameInterval;
 
     socket.on('register', function(user){
-
+      console.log('[%s] registering user %s', socket.id, user.name);
+      
       client_name = user.name;
-
       socket.emit('registered', {client_id:socket.id, name:client_name}); 
-
     });
 
     socket.on('create-game', function(user){
-      
       if (client_name) {
+        game = createGame(socket.id);
+        player = snakes.createPlayer(socket.id, client_name);
+        game.addPlayer(player);
 
-      game = createGame(socket.id);
-      player = snakes.createPlayer(socket.id, client_name);
-      game.addPlayer(player);
-
-      socket.join(game.id);
+        socket.join(game.id);
         socket.emit('game-created', {game_id:game.id}); 
 
-    } else {
-      socket.emit('error', {msg:"unregistered client can't create a game"})
-    }
-
+        console.log('[%s] created game %s', socket.id, game.id);
+      } else {
+        socket.emit('error', {msg:"unregistered client can't create a game"})
+      }
     });
 
     socket.on('join-game', function(game_id){
@@ -55,6 +52,8 @@ function init_io(io){
         socket.join(game.id);
         io.sockets.in(game.id).emit('game-joined', {game_id:game.id, player_names: game.getPlayerNames()}); // for himself too
         // socket.broadcast.to(game.id).emit('game-joined', {game_id:game.id}); // not for himself
+
+        console.log('[%s] joined game %s', socket.id, game.id);
       } else {
         socket.emit('error', {msg:"can't join a started game"})
       }
@@ -68,6 +67,8 @@ function init_io(io){
         
         updateGameInterval = initUpdateGameInterval(io, game);
         updateClientsInterval = initUpdateClientsInterval(io, game);
+
+        console.log('[%s] started game %s', socket.id, game.id);
       } else {
         socket.emit('error', {msg:"only the game creator cant start the game"})
       }
