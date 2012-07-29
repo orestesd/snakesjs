@@ -4,7 +4,6 @@ var Game = function(world) {
 	var MAX_PLAYERS = 2;
 
 	var _world = world;
-	var _id = random(100000, 999999);
 	var _players = [];
 	var _players_map = {};
 	var _status = -1;
@@ -58,10 +57,6 @@ var Game = function(world) {
 		return _world;
 	}
 
-	this.getId = function() {
-		return _id;
-	}
-
 	this.getAge = function() {
 		return _age;
 	}
@@ -76,6 +71,19 @@ var Game = function(world) {
 
 	this.getMaxPlayers = function() {
 		return MAX_PLAYERS;
+	}
+
+	this.getStatus = function(){
+		var players_positions = [];
+		for (var i = 0; i < _players.length; i++) {
+			players_positions[i] = _players[i].getPositions();
+		};
+		
+		var status = {
+			players_positions : players_positions
+		};
+
+		return status;
 	}
 
 	// FIXME duplicate code

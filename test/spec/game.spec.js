@@ -26,10 +26,6 @@ describe("[creating a game]", function() {
 		expect(game.getWorld()).exist
 	});
 
-	it("a game has an id", function() {
-		expect(game.getId()).exist
-	});	
-
 });
 
 describe("[starting a game and adding players]", function() {
@@ -98,6 +94,19 @@ describe("[starting a game and adding players]", function() {
 
 		expect(world.init).to.be.spy;
 		expect(world_init_spy).to.have.been.called.once;
+	});
+
+	it("the game return the current status", function() {
+		var player_a = snakes.createPlayer(1, 'john');
+		var player_b = snakes.createPlayer(2, 'paul');
+
+		game.addPlayer(player_a);
+		game.addPlayer(player_b);
+
+		var status = game.getStatus();
+		expect(status.players_positions).to.have.length(2);
+		expect(status.players_positions[0]).to.deep.equal(player_a.getPositions());
+
 	});
 });
 

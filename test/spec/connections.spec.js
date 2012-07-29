@@ -13,6 +13,10 @@ var options ={
   'force new connection': true
 };
 
+before(function() {
+	chai.use(spies);
+});
+
 describe("[single connections]", function() {
 
 	var client;
@@ -241,8 +245,53 @@ describe("[multiple connections]", function() {
 		client_a.emit('create-game');	
 	});
 
-	it("a client can send commands to the game");
+	it("a client can send commands to the game", function(done){
+		var game_id;
 
-	it("all client receive game status");
+		client_a.on('game-created', function(data) {
+			game_id = data.gameid;
+			client_a.emit('start-game');
+		});
+
+		client_a.on('game-started', function(data) {
+			var game = server.getGame(game_id);
+			var player = game.getPlayer(client_a.id);
+
+			var spy = chai.spy(player.turn);
+			player.turn = spy;
+
+			client_a.emit('command', {dir:2});
+
+			// cause we don't get ack from command event, wait some time
+			setTimeout(function(){
+				expect(spy).to.have.been.called.once;
+				done();
+			}, 20);
+			
+		});
+
+		client_a.emit('create-game');
+	});
+
+	it("clients receive game status", function(done){
+		var game_id;
+
+		client_a.on('game-created', function(data) {
+			game_id = data.gameid;
+			client_b.emit('join-game', game_id);
+		});
+
+		client_b.on('game-joined', function(data) {
+			client_a.emit('start-game');
+		});
+
+		client_b.on('game-status', function(data) {
+			expect(game_id).to.be.equal(data.game_id);
+			expect(data.players_positions).to.have.length(2);
+			done();
+		});
+
+		client_a.emit('create-game');
+	});
 
 });

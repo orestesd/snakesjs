@@ -13,6 +13,7 @@ io.sockets.on('connection', function (socket) {
   var client_name;
   var player;
   var game;
+  var updateInterval;
 
   socket.on('register', function(user){
 
@@ -59,8 +60,15 @@ io.sockets.on('connection', function (socket) {
     if (game && game.owner === socket.id) {
       game.start();
       io.sockets.in(game.id).emit('game-started');
+      updateInterval = initUpdateClients(game);
     } else {
       socket.emit('error', {msg:"only the game creator cant start the game"})
+    }
+  });
+
+  socket.on('command', function(command){
+    if (game && player) {
+      player.turn(command.dir);
     }
   });
 
@@ -81,5 +89,20 @@ function createGame(owner) {
 function getGame(id) {
 	return games[id];
 } 
+
+function initUpdateClients(game) {
+  var freq = 1000 / 5;
+  var interval = setInterval(function() {
+      var game_status = game.getStatus();
+
+      game_status.game_id = game.id;
+      game_status.timestamp = new Date().getTime();
+
+      io.sockets.in(game.id).emit('game-status', game_status);
+  
+  }, freq);
+
+  return interval;
+}
 
 exports.getGame = getGame;
