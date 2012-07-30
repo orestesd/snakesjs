@@ -24,7 +24,7 @@ function init_io(io){
       console.log('[%s] registering user %s', socket.id, user.name);
       
       client_name = user.name;
-      socket.emit('registered', {client_id:socket.id, name:client_name}); 
+      socket.emit('registered', {client_id:socket.id, client_name:client_name}); 
     });
 
     socket.on('create-game', function(user){

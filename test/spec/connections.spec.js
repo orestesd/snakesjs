@@ -33,7 +33,7 @@ describe("[single connections]", function() {
 
 	it("a client can register itself with a name", function(done) {
 		client.on('registered', function(user) {
-			expect(user.name).to.be.equal('john');
+			expect(user.client_name).to.be.equal('john');
 			done();
 		});
 	
@@ -289,7 +289,7 @@ describe("[multiple connections]", function() {
 
 		client_b.on('game-status', function(data) {
 			expect(game_id).to.be.equal(data.game_id);
-			expect(data.player_positions).to.have.length(2);
+			expect(data.players).to.have.length(2);
 			done();
 		});
 

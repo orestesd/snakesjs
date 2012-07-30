@@ -74,13 +74,17 @@ var Game = function(world) {
 	}
 
 	this.getStatus = function(){
-		var player_positions = [];
+		var players = [];
 		for (var i = 0; i < _players.length; i++) {
-			player_positions[i] = _players[i].getPositions();
+			var p = _players[i];
+			players[i] = {
+				positions : p.getPositions(),
+				dir: p.getDirection()
+			};
 		};
 		
 		var status = {
-			player_positions : player_positions
+			players : players
 		};
 
 		return status;
