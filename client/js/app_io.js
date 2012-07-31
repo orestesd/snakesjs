@@ -42,4 +42,4 @@ SnakeJS.io = (function(app, io, undefined) {
 		emit : emit
 	};
 	
-})(SnakeJS, io);
+})(SnakeJS || {}, io);

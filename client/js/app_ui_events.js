@@ -103,4 +103,4 @@ SnakeJS.events = (function(app, $, undefined) {
 		raise_global : function(event_name, params) {$(document).trigger(event_name, Array.prototype.slice.call(arguments, 1))}
 	};
 	
-})(SnakeJS, jQuery);
+})(SnakeJS || {}, jQuery);

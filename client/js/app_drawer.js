@@ -40,4 +40,4 @@ SnakeJS.drawer = (function(app, io, undefined) {
 		update : update
 	}
 
-})(SnakeJS);
+})(SnakeJS || {});
