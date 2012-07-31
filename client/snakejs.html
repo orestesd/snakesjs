@@ -3,6 +3,7 @@
   <head>
     <!-- js libs-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 	<script src="http://underscorejs.org/underscore-min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 
@@ -42,6 +43,10 @@
 		<input id="player_name" placeholder="game id" />
 		<a class="btn btn-primary btn-large" id="join_game">Join!</a>
 	</div>
+
+	<!-- jQuery templates-->
+	<script id="playerListTemplate" type="text/x-jquery-tmpl">
+	</script>
 
 	<script src="/js/app.js"></script>
     <script src="/js/app_io.js"></script>
