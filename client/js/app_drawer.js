@@ -19,24 +19,25 @@ SnakeJS.drawer = (function(app, $, undefined) {
     context = canvas.getContext("2d");    
     grid = app.game.topology.grid;
     square = {
-      width: 12,
+      width: 10,
       height: 12
     }
 
     $(canvas).width(square.width * getGridWidth()).height(square.height * getGridHeight());
 
     for (var i = 0; i < app.game.player_names.length; i++) {
-      colors[app.game.player_names[i]] = COLORS[i] + 1;
+      colors[app.game.player_names[i]] = COLORS[i + 1];
     };
 
     animationLoop();
   };
 
   var animationLoop = function() {
-      if (count++ > 500) return;
-      requestAnimationFrame(animationLoop);
+      
       if (app.game.getStatus())
         redraw();
+
+      requestAnimationFrame(animationLoop);
   }
 
   var clear = function() {
@@ -44,8 +45,8 @@ SnakeJS.drawer = (function(app, $, undefined) {
   }
 
   var drawTile = function(position) {
-    context.fillRect(position[1] * square.height + 1, 
-                     position[0] * square.width + 1, 
+    var offset = getOffset(position);
+    context.fillRect(offset[1] + 1, offset[0] + 1, 
                      square.height - 1, square.width - 1);
   };
 
@@ -55,7 +56,6 @@ SnakeJS.drawer = (function(app, $, undefined) {
       for (var x = 0; x < getGridWidth(); x++) {
         var type = grid[y][x];
         if (type === TILE_TYPES.WALL) {
-          console.log('drawing ', [y, x], context.fillStyle);
           drawTile([y, x]);
         } 
       }
@@ -66,13 +66,11 @@ SnakeJS.drawer = (function(app, $, undefined) {
     context.fillStyle = colors[player.name];
     for (var j = 0; j < player.positions.length; j++) {
       var position = player.positions[j];
-      drawTile(position);
-    };
   };
 
   var redraw = function() {
     clear();
-    //drawGrid();
+    drawGrid();
 
     var players = app.game.getStatus().players;
     if (players) {
@@ -82,7 +80,7 @@ SnakeJS.drawer = (function(app, $, undefined) {
     }
   };
 
-  var getPixel = function(position) {
+  var getOffset = function(position) {
     return [position[0] * square.width, position[1] * square.height] ;
   };
 
