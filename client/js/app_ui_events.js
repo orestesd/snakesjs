@@ -11,9 +11,10 @@ SnakeJS.events = (function(app, $, undefined) {
     var pressed_keys = {};
     
     var start_key_tracking = function() {
+
         $(document).keydown(function(evt) {
             var key_value = keys_def[evt.keyCode];
-            if (key_value) {
+            if (typeof key_value !== undefined) {
                 // pressed_keys[key_value] = 1;
                 
                 var command = {
@@ -32,6 +33,9 @@ SnakeJS.events = (function(app, $, undefined) {
     }
 
     $(document).ready(function() {
+
+        $('input').focus();
+
     	// listen key events
 
 
@@ -46,7 +50,7 @@ SnakeJS.events = (function(app, $, undefined) {
     	});
 
         $('#create_game').click(function() {
-            if (app.player_name) {
+            if (app.game.player_name) {
                 app.io.emit('create-game');
             }
         });
@@ -64,30 +68,48 @@ SnakeJS.events = (function(app, $, undefined) {
         // listen global events
         
         $(document).bind('registered', function(event, data) {
-            console.log('registered:', app.player_name, app.player_id);
+            console.log('registered:', data);
+
+            app.game.player_id = data.client_id;
+            app.game.player_name = data.client_name;
 
             $('#player_name').parent().removeClass('hide');
-            $('.registered').prepend($('<span/>').text('Welcome ' + app.player_name));
+            $.tmpl('Welcome ${name}', {name:app.player_name}).prependTo('.registered');
             $('.registered').removeClass('hide');
         });
 
         $(document).bind('game-created', function(event, data) {
-            console.log('game-created:', app.game_id);
+            console.log('game-created:', data);
 
+            app.game.id = data.game_id;
+            app.game.topology = data.topology;
+            app.game.player_names = [app.game.player_name];
+
+            // $.template('#playerListTemplate', {player_names:app.game.player_names}).prependTo('.registered');
             $('#game').removeClass('hide');
+            $('#init_form').addClass('hide');
         });
 
         $(document).bind('game-joined', function(event, data) {
             console.log('game-joined:', app.game_id);
+
+            app.game.id = data.game_id;
+            app.game.topology = data.topology;
+            app.game.player_names = data.player_names;
+
+            // $.template('#playerListTemplate', {player_names:app.game.player_names}).prependTo('.registered');
         });
 
         $(document).bind('game-started', function(event, data) {
             console.log('game-started:', data);
+
+            app.drawer.init($('#canvas')[0], app.game.topology, app.game.player_names);
+            
             start_key_tracking();
         });
 
         $(document).bind('game-status', function(event, data) {
-            app.drawer.update(data)
+            app.game.update(data);
         });
 
         $(document).bind('error', function(event, data) {

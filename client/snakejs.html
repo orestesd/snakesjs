@@ -18,7 +18,7 @@
   <body>
 
   	<div class="container">
-  		<div class="hero-unit">
+  		<div id="init_form" class="hero-unit">
 			<h1>SnakeJS</h1>
 			<p>Simple multiplayer snake game.</p>
 			<p>
@@ -46,10 +46,16 @@
 
 	<!-- jQuery templates-->
 	<script id="playerListTemplate" type="text/x-jquery-tmpl">
+		<ul>	
+			{{each player_names}}
+				<li>${$value}</li>
+			{{/each}}
+		</ul>
 	</script>
 
 	<script src="/js/app.js"></script>
     <script src="/js/app_io.js"></script>
+    <script src="/js/app_game.js"></script>
     <script src="/js/app_drawer.js"></script>
     <script src="/js/app_ui_events.js"></script>
 

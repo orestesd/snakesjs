@@ -1,43 +1,101 @@
-SnakeJS.drawer = (function(app, io, undefined) {
+SnakeJS.drawer = (function(app, $, undefined) {
 
-	var update = function(status) {
-		var players = status.players;
-		
-	};
+  var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||  
+                              window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
-	/*
-	var redraw = function(snakes) {
-        var element, snake, x, y, _i, _len, _results;
-        context.fillStyle = 'rgb(230,230,230)';
-        for (x = 0; x <= 49; x++) {
-          for (y = 0; y <= 49; y++) {
-            context.fillRect(x * 10, y * 10, 9, 9);
-          }
-        }
-        _results = [];
-        for (_i = 0, _len = snakes.length; _i < _len; _i++) {
-          snake = snakes[_i];
-          context.fillStyle = snake.id === id ? 'rgb(170,0,0)' : 'rgb(0,0,0)';
-          if (snake.id === id) {
-            $("#kills").html("Kills: " + snake.kills);
-            $("#deaths").html("Deaths: " + snake.deaths);
-          }
-          _results.push((function() {
-            var _j, _len2, _ref, _results2;
-            _ref = snake.elements;
-            _results2 = [];
-            for (_j = 0, _len2 = _ref.length; _j < _len2; _j++) {
-              element = _ref[_j];
-              x = element[0] * 10;
-              y = element[1] * 10;
-              _results2.push(context.fillRect(x, y, 9, 9));
-            }
-            return _results2;
-          })());
-        }
-	*/
-	return {
-		update : update
-	}
+  var TILE_TYPES = {EMPTY:0, WALL:1}
+  var COLORS = ['rgb(220,220,220)', 'rgb(20,20,255)', 
+                'rgb(255,20,20)',  'rgb(20,255,20)', 
+                'rgb(255,255,20)', 'rgb(255,20,255)']
 
-})(SnakeJS || {});
+
+  var canvas, context, grid, square;
+
+  var colors = {}
+  var count = 0;
+
+  var init = function(canv) {
+    canvas = canv;
+    context = canvas.getContext("2d");    
+    grid = app.game.topology.grid;
+    square = {
+      width: 12,
+      height: 12
+    }
+
+    $(canvas).width(square.width * getGridWidth()).height(square.height * getGridHeight());
+
+    for (var i = 0; i < app.game.player_names.length; i++) {
+      colors[app.game.player_names[i]] = COLORS[i] + 1;
+    };
+
+    animationLoop();
+  };
+
+  var animationLoop = function() {
+      if (count++ > 500) return;
+      requestAnimationFrame(animationLoop);
+      if (app.game.getStatus())
+        redraw();
+  }
+
+  var clear = function() {
+    canvas.width = canvas.width;
+  }
+
+  var drawTile = function(position) {
+    context.fillRect(position[1] * square.height + 1, 
+                     position[0] * square.width + 1, 
+                     square.height - 1, square.width - 1);
+  };
+
+  var drawGrid = function() {
+    context.fillStyle = COLORS[0];
+    for (var y = 0; y < getGridHeight(); y++) {
+      for (var x = 0; x < getGridWidth(); x++) {
+        var type = grid[y][x];
+        if (type === TILE_TYPES.WALL) {
+          console.log('drawing ', [y, x], context.fillStyle);
+          drawTile([y, x]);
+        } 
+      }
+    }
+  }
+
+  var drawPlayer = function(player) {
+    context.fillStyle = colors[player.name];
+    for (var j = 0; j < player.positions.length; j++) {
+      var position = player.positions[j];
+      drawTile(position);
+    };
+  };
+
+  var redraw = function() {
+    clear();
+    //drawGrid();
+
+    var players = app.game.getStatus().players;
+    if (players) {
+      for (var i = 0; i < players.length; i++) {
+        drawPlayer(players[i])
+      };
+    }
+  };
+
+  var getPixel = function(position) {
+    return [position[0] * square.width, position[1] * square.height] ;
+  };
+
+  var getGridHeight = function() {
+    return grid.length;
+  };
+  
+  var getGridWidth = function() {
+    return grid[0].length;
+  };
+
+  return {
+    init : init
+  }
+
+})(SnakeJS || {}, jQuery);
