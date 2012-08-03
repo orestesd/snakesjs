@@ -34,7 +34,7 @@ function init_io(io){
         game.addPlayer(player);
 
         socket.join(game.id);
-        socket.emit('game-created', {game_id:game.id}); 
+        socket.emit('game-created', {game_id:game.id, topology:game.getWorld().getTopology()}); 
 
         console.log('[%s] created game %s', socket.id, game.id);
       } else {
@@ -74,7 +74,7 @@ function init_io(io){
       }
     });
 
-    socket.on('command', function(command){
+    socket.on('command', function(command){ 
       if (game && player) {
         player.turn(command.dir);
       }

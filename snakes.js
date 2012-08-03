@@ -185,6 +185,10 @@ var World = function(topology) {
 	this.getPlayer = function(id) {
 		return _players[id];
 	}
+
+	this.getTopology = function() {
+		return _topology;
+	};
 }
 
 var items = [

@@ -78,6 +78,7 @@ var Game = function(world) {
 		for (var i = 0; i < _players.length; i++) {
 			var p = _players[i];
 			players[i] = {
+				name: p.getName(),
 				positions : p.getPositions(),
 				dir: p.getDirection()
 			};
