@@ -184,21 +184,5 @@ describe("[commands]", function() {
 		game.command({player:0, dir:snakes.DIRECTIONS.LEFT});
 
 	});
-});
 
-describe("[connections]", function() {
-
-	it("a client can register itself with a name");
-
-	it("a registered client can create a new game");
-
-	it("a registered client can join a not full game");
-
-	it("a game creator can start it");
-
-	it("a game joiner can't start it");
-
-	it("a client can send commands to the game");
-
-	it("a client receive game status");
 });
