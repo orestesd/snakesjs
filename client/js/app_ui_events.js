@@ -57,7 +57,10 @@ SnakeJS.events = (function(app, $, undefined) {
     	
         $('#join_game').click(function() {
             var game_id = $('#game_id').val();
-            
+            if (game_id) {
+                app.io.emit('join-game', game_id);
+            }
+
         });
     	
     	$('#start_game').click(function() {
@@ -91,13 +94,14 @@ SnakeJS.events = (function(app, $, undefined) {
         });
 
         $(document).bind('game-joined', function(event, data) {
-            console.log('game-joined:', app.game_id);
+            console.log('game-joined:', data.game_id);
 
             app.game.id = data.game_id;
             app.game.topology = data.topology;
             app.game.player_names = data.player_names;
 
-            // $.template('#playerListTemplate', {player_names:app.game.player_names}).prependTo('.registered');
+            $('#game').removeClass('hide');
+            $('#init_form').addClass('hide');
         });
 
         $(document).bind('game-started', function(event, data) {

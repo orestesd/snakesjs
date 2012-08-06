@@ -8,7 +8,7 @@ var gamejs = require('./game.js'),
 var games = {};
 
 var update_clients_freq = 1000 / 5;
-var update_game_freq = 1000 / 5;
+var update_game_freq = 1000 / 4;
 
 function init_io(io){
 
@@ -44,13 +44,14 @@ function init_io(io){
 
     socket.on('join-game', function(game_id){
       var joined_game = getGame(game_id);
+
       if (joined_game && ! joined_game.isStarted()) {
         game = joined_game;
         player = snakes.createPlayer(socket.id, client_name);
         game.addPlayer(player);
 
         socket.join(game.id);
-        io.sockets.in(game.id).emit('game-joined', {game_id:game.id, player_names: game.getPlayerNames()}); // for himself too
+        io.sockets.in(game.id).emit('game-joined', {game_id:game.id, topology:game.getWorld().getTopology(), player_names: game.getPlayerNames()}); // for himself too
         // socket.broadcast.to(game.id).emit('game-joined', {game_id:game.id}); // not for himself
 
         console.log('[%s] joined game %s', socket.id, game.id);
