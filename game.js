@@ -5,7 +5,6 @@ var Game = function(world) {
 
 	var _world = world;
 	var _players = [];
-	var _players_map = {};
 	var _status = -1;
 	var _age = 0;
 
@@ -33,7 +32,6 @@ var Game = function(world) {
 	this.addPlayer = function(player) {
 		if (! this.isStarted() && _players.length < MAX_PLAYERS) {
 			_players.push(player);
-			_players_map[player.getId()] = player;
 		}
 	}
 
@@ -42,7 +40,13 @@ var Game = function(world) {
 	}
 
 	this.getPlayer = function(id) {
-		return _players_map[id];
+		for (var i = 0; i < _players.length; i++) {
+			var player = _players[i];
+			if (player.getId() === id) {
+				return player; 
+			}
+		};
+		return undefined;
 	}
 
 	this.getPlayerNames = function() {

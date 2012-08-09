@@ -246,7 +246,7 @@ describe("[multiple connections]", function() {
 
 		client_a.emit('create-game');	
 	});
-
+/*
 	it("a client can send commands to the game", function(done){
 		var game_id;
 
@@ -261,20 +261,53 @@ describe("[multiple connections]", function() {
 
 			var spy = chai.spy(player.turn);
 			player.turn = spy;
+			expect(player.getDirection()).to.be.equal(0);
 
-			client_a.emit('command', {dir:2});
+			client_a.emit('command', {dir:3});
 
 			// cause we don't get ack from command event, wait some time
 			setTimeout(function(){
+				expect(player.getDirection()).to.be.equal(3);
 				expect(spy).to.have.been.called.once;
 				done();
-			}, 20);
+			}, 1000 / 4);
 			
 		});
 
 		client_a.emit('create-game');
 	});
 
+	it("the commands are executed one by one (for each client) in each game step", function(done) {
+		var game_id;
+
+		client_a.on('game-created', function(data) {
+			game_id = data.game_id;
+			client_a.emit('start-game');
+		});
+
+		client_a.on('game-started', function(data) {
+			var game = gameio.getGame(game_id);
+			var player = game.getPlayer(client_a.id);
+
+			var spy = chai.spy(player.turn);
+			player.turn = spy;
+
+			client_a.emit('command', {dir:3});
+			client_a.emit('command', {dir:3});
+			client_a.emit('command', {dir:3});
+
+			// cause we don't get ack from command event, wait some time
+			setTimeout(function(){
+				expect(player.getDirection()).to.be.equal(3);
+				expect(spy).to.have.been.called.once;
+				done();
+			}, 1000 / 4);
+			
+		});
+
+		client_a.emit('create-game');
+	});
+*/
 	it("clients receive game status", function(done){
 		var game_id;
 

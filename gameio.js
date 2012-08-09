@@ -6,6 +6,7 @@ var gamejs = require('./game.js'),
 	topologies = require('./topologies.js');
 
 var games = {};
+var commands = {};
 
 var update_clients_freq = 1000 / 7;
 var update_game_freq = 1000 / 7;
@@ -24,6 +25,7 @@ function init_io(io){
       console.log('[%s] registering user %s', socket.id, user.name);
       
       client_name = user.name;
+      commands[client_name] = [];
       socket.emit('registered', {client_id:socket.id, client_name:client_name}); 
     });
 
@@ -77,8 +79,7 @@ function init_io(io){
 
     socket.on('command', function(command){ 
       if (game && player) {
-        console.log('command');
-        player.turn(command.dir);
+        commands[client_name].push(command.dir);
       }
     });
 
@@ -101,6 +102,18 @@ function getGame(id) {
 	return games[id];
 } 
 
+function processCommands(game) {
+  var players = game.getPlayers();
+  for (var i = 0; i < players.length; i++) {
+    var player = players[i];
+    var current_command = commands[player.getName()].shift();
+    
+    if (current_command) {
+      player.turn(current_command.dir);
+    }
+  };
+}
+
 function initUpdateClientsInterval(io, game) {
   var interval = setInterval(function() {
       var game_status = game.getStatus();
@@ -117,6 +130,7 @@ function initUpdateClientsInterval(io, game) {
 
 function initUpdateGameInterval(io, game) {
   var interval = setInterval(function() {
+      processCommands(game);
       game.step();
 
   }, update_game_freq);
