@@ -5,7 +5,14 @@ var connect = require('connect'),
 
 var myserver = {host:'127.0.0.1', port:8090};
 
-var app_connect = connect().use(connect.static(__dirname+'/client'));
+var app_connect = connect()
+	.use(connect.static(__dirname+'/client'))
+	.use(function(req, res){
+    	res.writeHead(302, {
+		  'Location': 'snakejs.html'
+		});
+		res.end();
+  	});
 
 var app = http.createServer(app_connect).listen(myserver.port);
 
