@@ -79,7 +79,7 @@ function init_io(io){
 
     socket.on('command', function(command){ 
       if (game && player) {
-        commands[client_name].push(command.dir);
+        commands[client_name].push(command);
       }
     });
 
@@ -107,7 +107,7 @@ function processCommands(game) {
   for (var i = 0; i < players.length; i++) {
     var player = players[i];
     var current_command = commands[player.getName()].shift();
-    
+
     if (current_command) {
       player.turn(current_command.dir);
     }
@@ -133,6 +133,7 @@ function initUpdateGameInterval(io, game) {
       processCommands(game);
       game.step();
 
+      io.sockets.in(game.id).emit('game-step');
   }, update_game_freq);
 
   return interval;
