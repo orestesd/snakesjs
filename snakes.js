@@ -45,7 +45,7 @@ var Player = function(id, name) {
 	}
 	
 	this.feed = function(item) {
-		item.action.call(this);
+		item.action.call(item, this);
 	}
 
 	this.grow = function(amount) {
@@ -193,13 +193,13 @@ var World = function(topology) {
 
 var items = [
 	{  	name : 'grow',
-		action: function() {
-			this.grow(2);
+		action: function(player) {
+			player.grow(2);
 		}
 	},
 	{  	name : 'shrink',
-		action: function() {
-			this.grow(-2);
+		action: function(player) {
+			player.grow(-2);
 		}
 	}
 ]
