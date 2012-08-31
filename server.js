@@ -1,24 +1,14 @@
 
-var connect = require('connect'),
-	http = require('http');
+var express = require('express');
 	
 
-var myserver = {host:'127.0.0.1', port:8090};
+var app = express.createServer();
+var io = require('socket.io').listen(app);
 
-var app_connect = connect()
-	.use(connect.static(__dirname+'/client'))
-	.use(function(req, res){
-    	res.writeHead(302, {
-		  'Location': 'snakejs.html'
-		});
-		res.end();
-  	});
+var GameIO = new require('./gameio.js')(io);
+var config = require('./config.js')(app, express, io);
+var routes = require('./routes.js')(app);
 
-var app = http.createServer(app_connect).listen(myserver.port);
 
-var io = require('socket.io').listen(app),
-	GameIO = new require('./gameio.js').init(io);
-
-io.set('log level', 1);
-
-console.log('server started: ', myserver);
+app.listen(process.env.PORT || 8090);
+console.log('server started %s:%s', app.address().address, app.address().port);
