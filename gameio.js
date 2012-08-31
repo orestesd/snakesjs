@@ -21,56 +21,13 @@ module.exports = function(io){
       var updateClientsInterval;
       var updateGameInterval;
 
-    socket.on('register', function(user){
+      socket.on('register', function(user){
         console.log('[%s] registering user %s', socket.id, user.name);
-        client_name = user.name;
-        socket.emit('registered', {client_id:socket.id, client_name:client_name}); 
-    });
-
-    socket.on('create-game', function(user){
-      if (client_name) {
-        game = createGame(socket.id);
-        player = snakes.createPlayer(socket.id, client_name);
-        game.addPlayer(player);
-
-        socket.join(game.id);
-        socket.emit('game-created', {game_id:game.id, topology:game.getWorld().getTopology()}); 
-
-        console.log('[%s] created game %s', socket.id, game.id);
-      } else {
-        socket.emit('error', {msg:"unregistered client can't create a game"})
-      }
-    });
-
-    socket.on('join-game', function(game_id){
-      var joined_game = getGame(game_id);
-
-      if (joined_game && ! joined_game.isStarted()) {
-        game = joined_game;
-        player = snakes.createPlayer(socket.id, client_name);
-        game.addPlayer(player);
-
-        socket.join(game.id);
-        io.sockets.in(game.id).emit('game-joined', {game_id:game.id, topology:game.getWorld().getTopology(), player_names: game.getPlayerNames()}); // for himself too
-        // socket.broadcast.to(game.id).emit('game-joined', {game_id:game.id}); // not for himself
-
-        console.log('[%s] joined game %s', socket.id, game.id);
-      } else {
-        socket.emit('error', {msg:"can't join a started game"})
-      }
-    
-    });
-
-    socket.on('start-game', function(){
-      if (game && game.owner === socket.id) {
-        game.start();
-        io.sockets.in(game.id).emit('game-started');
         
         client_name = user.name;
         commands[client_name] = [];
         socket.emit('registered', {client_id:socket.id, client_name:client_name}); 
-      }
-    });
+      });
 
       socket.on('create-game', function(user){
         if (client_name) {
