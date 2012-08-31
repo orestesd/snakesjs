@@ -6,7 +6,7 @@ module.exports = function(app, express, io){
   app.configure(function(){
     app.use(express.bodyParser());
     app.use(express.cookieParser());
-    app.use(express.session({ secret: 'c4SDGm$s51as)4_59f' }));
+    // app.use(express.session({ secret: 'c4SDGm$s51as)4_59f' }));
     app.use(express.methodOverride());
     app.use(app.router);
     app.use(express.static(__dirname + '/client'));
