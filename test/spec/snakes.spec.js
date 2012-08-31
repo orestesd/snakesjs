@@ -222,9 +222,32 @@ describe("[world]", function() {
 
 			for (var i = 0; items < items.length; i++) {
 				var it = items[i];
-				expect(it.pos[0]).toBeLessThan(world.getSize().h)
-				expect(it.pos[1]).toBeLessThan(world.getSize().w)
+				expect(it.pos[0]).toBeGreatThan(1);
+				expect(it.pos[0]).toBeLessThan(world.getSize().h - 1)
+				expect(it.pos[1]).toBeLessThan(world.getSize().w - 1)
+				expect(it.pos[1]).toBeGreatThan(1);
 			};
+		});
+
+		it("the player gets items", function() {
+			var spy = chai.spy(player_a.feed);
+			player_a.feed = spy;
+			
+			var item;
+			var items = world.putItems(10);
+			for (var i = 0; i < items.length; i++) {
+				item = items[i];
+				if (item.pos[0] > 1 && item.pos[1] < world.getSize().h - 1) {
+					break;
+				}
+			}
+			
+
+			// player's direction is up
+			player_a.setHeadPosition([item.pos[0] + 1, item.pos[1]]);
+			world.move(player_a);
+
+			expect(spy).to.have.been.called.once;
 		});
 	});
 
@@ -246,7 +269,7 @@ describe("[item]", function() {
 		player.feed(item);
 
 		expect(item.action).to.be.spy;
-		expect(spy).to.have.been.called;
+		expect(spy).to.have.been.called.once;
 
 	});
 
@@ -266,5 +289,7 @@ describe("[item]", function() {
 		expect(player.getTailSize()).to.equal(5);
 		player.feed(item);
 		expect(player.getTailSize()).to.equal(3);
+		player.feed(item);
+		expect(player.getTailSize()).to.equal(2);
 	});
 });

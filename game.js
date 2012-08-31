@@ -87,9 +87,23 @@ var Game = function(world) {
 				dir: p.getDirection()
 			};
 		};
+
+		var _items = this.getWorld().getItems();
+		var items = [];
+		for (var i = 0; i < _items.length; i++) {
+			var itp = _items[i];
+			if (itp) {
+				items[i] = {
+					name : itp.item.name,
+					eaten : itp.eaten,
+					position : itp.pos
+				};
+			}
+		};
 		
 		var status = {
-			players : players
+			players : players,
+			items : items
 		};
 
 		return status;

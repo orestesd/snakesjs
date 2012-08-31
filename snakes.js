@@ -50,6 +50,9 @@ var Player = function(id, name) {
 
 	this.grow = function(amount) {
 		_tail_size += amount;
+		if (_tail_size <= 2) {
+			_tail_size = 2;
+		}
 	}
 
 	this.resetTailSize = function() {
@@ -112,11 +115,12 @@ var World = function(topology) {
 	}
 	
 	this.putItems = function (number) {
+		_items = [];
 		var n = number || 5;
 		for (var i = 0; i < n; i++) {
-			var type = - (random(1, 2));
-			var pos = [random(0, _size.h), random(0, _size.w)];
-			_items.push({type: type, pos:pos});
+			var item = items[(random(0, items.length - 1))];
+			var pos = [random(1, _size.h - 1), random(1, _size.w - 1)];
+			_items.push({item: item, pos:pos});
 		}
 
 		return _items;
@@ -150,6 +154,14 @@ var World = function(topology) {
 		player.moveTo(next_position);
 		
 		_players[player.id] = player;
+
+		for (var id in _items) {
+			var item = _items[id];
+			if (item.pos[0] === next_position[0] && item.pos[1] === next_position[1] && !item.eaten) {
+				player.feed(item.item);
+				item.eaten = true;
+			}
+		}
 
 		function calculateNextPosition(current, direction) {
 			var new_position = [current[0], current[1]];
@@ -185,6 +197,10 @@ var World = function(topology) {
 	this.getPlayer = function(id) {
 		return _players[id];
 	}
+
+	this.getItems = function() {
+		return _items;
+	};
 
 	this.getTopology = function() {
 		return _topology;

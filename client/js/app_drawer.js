@@ -3,7 +3,8 @@ SnakeJS.drawer = (function(app, $, undefined) {
   var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||  
                               window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
-  var TILE_TYPES = {EMPTY:0, WALL:1}
+  var TILE_TYPES = {EMPTY:0, WALL:1};
+  var ITEM_COLORS = {'shrink':'rgb(255,160,255)', 'grow':'rgb(255,255,160)'}
   var COLORS = ['rgb(0,0,0)', 'rgb(20,20,255)', 
                 'rgb(255,20,20)',  'rgb(20,255,20)', 
                 'rgb(255,255,20)', 'rgb(255,20,255)']
@@ -72,9 +73,24 @@ SnakeJS.drawer = (function(app, $, undefined) {
     };
   };
 
+  var drawItem = function(item) {
+    if (!item.eaten) {
+      context.fillStyle = ITEM_COLORS[item.name];
+      drawTile(item.position);
+    }
+  };
+
   var redraw = function() {
     clear();
     drawGrid();
+
+    var items = app.game.getStatus().items;
+    console.log(items);
+    if (items) {
+      for (var i = 0; i < items.length; i++) {
+        drawItem(items[i])
+      };
+    }
 
     var players = app.game.getStatus().players;
     if (players) {
