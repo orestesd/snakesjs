@@ -1,6 +1,6 @@
 SnakeJS.io = (function(app, io, undefined) {
 
-	var socket = io.connect('http://localhost:8090');
+	var socket = io.connect('/');
 	
 	var emit = function(name, data) {
 		 socket.emit(name, data);
