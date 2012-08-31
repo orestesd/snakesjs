@@ -11,4 +11,6 @@ var routes = require('./routes.js')(app);
 
 
 app.listen(process.env.PORT || 8090);
-console.log('server started %s:%s', app.address().address, app.address().port);
+
+if (app.address())
+	console.log('server started %s:%s on mode %s', app.address().address, app.address().port, app.settings.env);
