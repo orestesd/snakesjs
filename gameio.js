@@ -133,6 +133,11 @@ module.exports = function(io){
         processCommands(game);
         game.step();
 
+        var placeItems = Math.random() < 0.01;
+        if (!!placeItems) {
+          game.getWorld().putItems();
+        }
+
         io.sockets.in(game.id).emit('game-step');
     }, update_game_freq);
 

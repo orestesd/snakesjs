@@ -101,7 +101,6 @@ SnakeJS.events = (function(app, $, undefined) {
             app.game.player_names = data.player_names;
 
             $("#playerListTemplate").tmpl({player_names:app.game.player_names}).appendTo($("#game div").empty());
-
             $('#game').removeClass('hide');
             $('#init_form').addClass('hide');
         });
