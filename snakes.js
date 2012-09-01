@@ -39,6 +39,7 @@ var Player = function(id, name) {
 			while(_positions.length > _tail_size) {
 				_positions.shift();
 			}
+			_dead_count = 0;
 		} else {
 			_dead_count += 1;
 		}

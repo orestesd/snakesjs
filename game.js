@@ -84,7 +84,8 @@ var Game = function(world) {
 			players[i] = {
 				name: p.getName(),
 				positions : p.getPositions(),
-				dir: p.getDirection()
+				dir: p.getDirection(),
+				dead : p.isDead()
 			};
 		};
 

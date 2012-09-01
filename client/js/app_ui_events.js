@@ -117,6 +117,12 @@ SnakeJS.events = (function(app, $, undefined) {
             app.game.update(data);
         });
 
+        $(document).bind('player-dead', function(event, data) {
+            console.log('player dead', data);
+            app.drawer.stop();
+            $('#game > div').append($('<span>game end. player _p loses</span>'.replace('_p', data.name)));
+        });
+
         $(document).bind('error', function(event, data) {
             console.log('error:', data);
 

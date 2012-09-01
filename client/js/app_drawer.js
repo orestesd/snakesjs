@@ -34,6 +34,10 @@ SnakeJS.drawer = (function(app, $, undefined) {
     animationLoop();
   };
 
+  var stop = function() {
+    animationLoop = function() {};
+  };
+
   var animationLoop = function() {
       
       if (app.game.getStatus())
@@ -85,7 +89,6 @@ SnakeJS.drawer = (function(app, $, undefined) {
     drawGrid();
 
     var items = app.game.getStatus().items;
-    console.log(items);
     if (items) {
       for (var i = 0; i < items.length; i++) {
         drawItem(items[i])
@@ -95,7 +98,11 @@ SnakeJS.drawer = (function(app, $, undefined) {
     var players = app.game.getStatus().players;
     if (players) {
       for (var i = 0; i < players.length; i++) {
-        drawPlayer(players[i])
+        var player = players[i];
+        drawPlayer(player);
+        if (player.dead) {
+          app.events.raise_global('player-dead', player);  
+        }
       };
     }
   };
@@ -113,7 +120,8 @@ SnakeJS.drawer = (function(app, $, undefined) {
   };
 
   return {
-    init : init
+    init : init,
+    stop : stop
   }
 
 })(SnakeJS || {}, jQuery);
