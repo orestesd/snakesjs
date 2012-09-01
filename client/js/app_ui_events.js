@@ -76,9 +76,16 @@ SnakeJS.events = (function(app, $, undefined) {
             app.game.player_id = data.client_id;
             app.game.player_name = data.client_name;
 
-            $('#player_name').parent().removeClass('hide');
-            $.tmpl('Welcome ${name}', {name:app.player_name}).prependTo('.registered');
+            $('.unregistered').addClass('hide');
             $('.registered').removeClass('hide');
+
+            $.tmpl('Welcome ${name}', {name:app.player_name}).prependTo('.registered');
+
+            console.log(window.location.search)
+            if (window.location.search.indexOf('?g=') >= 0) {
+                var game_id = window.location.search.substring(3);
+                app.io.emit('join-game', game_id);
+            }
         });
 
         $(document).bind('game-created', function(event, data) {
@@ -91,6 +98,9 @@ SnakeJS.events = (function(app, $, undefined) {
             $("#playerListTemplate").tmpl({player_names:app.game.player_names}).appendTo($("#game div").empty());
             $('#game').removeClass('hide');
             $('#init_form').addClass('hide');
+
+            var link = window.location.href + '?g='+app.game.id;
+            $('#gameLinkTemplate').tmpl({link:link}).prependTo($("#game span").empty());
         });
 
         $(document).bind('game-joined', function(event, data) {
@@ -129,7 +139,7 @@ SnakeJS.events = (function(app, $, undefined) {
             var $msg = $('<div class="alert alert-error" />').append(data.msg);
             $('.container').prepend($msg);
         });
-    
+
     });
     
 	return {
