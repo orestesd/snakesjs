@@ -1,20 +1,27 @@
 var chai = require('chai'),
 	expect = require('chai').expect,
-	spies = require('chai-spies');
+	sinon = require('sinon');
 
 var basedir = '../../';
 var snakes = require(basedir + 'snakes.js');
 var topologies = require(basedir + 'topologies.js');
 
-before(function() {
-	chai.use(spies);
+var sandbox;
+
+beforeEach(function() {
+	sandbox = sinon.sandbox.create();
+});
+
+afterEach(function() {
+	sandbox = sandbox.restore();
 });
 
 describe("[player]", function() {
-	var player;
+	var player, sandbox;
 	
 	beforeEach(function() {
 		player = snakes.createPlayer(1, 'john');
+		sandbox = sinon.sandbox.create();
 	});
 
 	it("you can create a player with an id and a name", function() {
@@ -111,11 +118,16 @@ describe("[player]", function() {
 });
 
 describe("[world]", function() {
-	var topo, world;
+	var topo, world, sandbox;
 		
 	beforeEach(function() {
 		topo = topologies.getAll().walled;
 		world = snakes.createWorld(topo);
+		sandbox = sinon.sandbox.create();
+	});
+
+	afterEach(function() {
+		sandbox = sandbox.restore();
 	});
 		
 	it("world size is calculated ok from a topology", function() {
@@ -150,19 +162,16 @@ describe("[world]", function() {
 		});
 		
 		it("word moveAll moves all players", function() {
-			var spy_world = chai.spy(world.move);
-			var spy_player_a = chai.spy(player_a.moveTo);
-			var spy_player_b = chai.spy(player_b.moveTo);
-			world.move = spy_world;
-			player_a.moveTo = spy_player_a;
-			player_b.moveTo = spy_player_b;
+			sandbox.spy(world, 'move');
+			sandbox.spy(player_a, 'moveTo');
+			sandbox.spy(player_b, 'moveTo');
 
 			world.init([player_a, player_b]);
 
 			world.moveAll();
-			expect(spy_world).to.have.been.called.twice;
-			expect(spy_player_a).to.have.been.called.once;
-			expect(spy_player_b).to.have.been.called.once;
+			expect(world.move.calledTwice).to.be.ok;
+			expect(player_a.moveTo.calledOnce).to.be.ok;
+			expect(player_b.moveTo.calledOnce).to.be.ok;
 		});
 
 		it("the world can move a player based in his direction", function() {
@@ -230,8 +239,7 @@ describe("[world]", function() {
 		});
 
 		it("the player gets items", function() {
-			var spy = chai.spy(player_a.feed);
-			player_a.feed = spy;
+			sandbox.spy(player_a, 'feed');
 			
 			var item;
 			var items = world.putItems(10);
@@ -247,7 +255,7 @@ describe("[world]", function() {
 			player_a.setHeadPosition([item.pos[0] + 1, item.pos[1]]);
 			world.move(player_a);
 
-			expect(spy).to.have.been.called.once;
+			expect(player_a.feed.calledOnce).to.be.ok;
 		});
 	});
 
@@ -263,13 +271,11 @@ describe("[item]", function() {
 
 	it("if the player eats a item, the item action is performed", function() {
 		var item = snakes.items[0];
-		var spy = chai.spy(item.action);
-		item.action = spy;
+		sandbox.spy(item, 'action');
 
 		player.feed(item);
 
-		expect(item.action).to.be.spy;
-		expect(spy).to.have.been.called.once;
+		expect(item.action.calledOnce).to.be.ok;
 
 	});
 

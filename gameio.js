@@ -80,6 +80,7 @@ module.exports = function(io){
       socket.on('command', function(command){ 
         if (game && player) {
           commands[client_name].push(command);
+          io.sockets.in(game.id).emit('command-received', {client_name:client_name, command:command});
         }
       });
 
@@ -148,7 +149,9 @@ module.exports = function(io){
   init_io(io);
 
   return {
-    getGame : getGame
+    getGame : getGame,
+    update_clients_freq : update_clients_freq,
+    update_game_freq : update_game_freq
   };
 
 };

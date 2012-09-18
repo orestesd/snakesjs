@@ -1,23 +1,27 @@
 var chai = require('chai'),
 	expect = require('chai').expect,
-	spies = require('chai-spies');
+	sinon = require('sinon');
 
 var basedir = '../../';
 var snakes = require(basedir + 'snakes.js');
 var topologies = require(basedir + 'topologies.js');
 var gamejs = require(basedir + 'game.js');
 
-before(function() {
-	chai.use(spies);
-});
-
 var game, topo, world;
+
+var sandbox;
 
 beforeEach(function() {
 	topo = topologies.getAll().walled;
 	world = snakes.createWorld(topo);
 	game = gamejs.createGame(world);
+	sandbox = sinon.sandbox.create();
 });
+
+afterEach(function() {
+	sandbox = sandbox.restore();
+});
+
 
 
 describe("[creating a game]", function() {
@@ -75,25 +79,22 @@ describe("[starting a game and adding players]", function() {
 	});
 
 	it("when the game is started, the world is initialized", function() {
-		var world_init_spy = chai.spy(world.init);
-		world.init = world_init_spy;
+		sandbox.spy(world, 'init');
 
 		game.addPlayer(snakes.createPlayer(1, 'john'));
 		game.start();
 
-		expect(world_init_spy).to.have.been.called.once;
+		expect(world.init.calledOnce).to.be.ok;
 	});
 
 	it("if the game is already started, start it again is actionless", function() {
-		var world_init_spy = chai.spy(world.init);
-		world.init = world_init_spy;
+		sandbox.spy(world, 'init');
 
 		game.addPlayer(snakes.createPlayer(1, 'john'));
 		game.start();
 		game.start();
 
-		expect(world.init).to.be.spy;
-		expect(world_init_spy).to.have.been.called.once;
+		expect(world.init.calledOnce).to.be.ok;
 	});
 
 	it("the game return the current status", function() {
@@ -131,18 +132,17 @@ describe("[running a game]", function() {
 		var player_a = snakes.createPlayer(1, 'john');
 		var player_b = snakes.createPlayer(2, 'paul');
 
-		var world_move_spy = chai.spy(world.moveAll);
-		world.moveAll = world_move_spy;
+		sandbox.spy(world, 'moveAll');
 
 		game.addPlayer(player_a);
 		game.addPlayer(player_b);
 		game.start();
 		
 		game.step();
-		expect(world_move_spy).to.have.been.called.once;
+		expect(world.moveAll.calledOnce).to.be.ok;
 
 		game.step();
-		expect(world_move_spy).to.have.been.called.twice;
+		expect(world.moveAll.calledTwice).to.be.ok;
 
 	});
 });
@@ -160,23 +160,21 @@ describe("[commands]", function() {
 	});
 
 	it("an started game pipes commands to world players", function() {
-		var spy = chai.spy(player_a.turn);
-		player_a.turn = spy;
+		sandbox.spy(player_a ,'turn');
 
 		game.start();
 		game.command({player:1, dir:snakes.DIRECTIONS.LEFT});
 
-		expect(spy).to.have.been.called.once;
+		expect(player_a.turn.calledOnce).to.be.ok;
 
 	});
 
 	it("a not started game does't pipes commands to world players", function() {
-		var spy = chai.spy(player_a.turn);
-		player_a.turn = spy;
+		sandbox.spy(player_a, 'turn');
 
 		game.command({player:1, dir:snakes.DIRECTIONS.LEFT});
 
-		expect(spy).not.to.have.been.called.once;
+		expect(player_a.turn.called).to.not.be.ok;
 	});
 
 	it("a unexistent player id in a command don't fail", function() {

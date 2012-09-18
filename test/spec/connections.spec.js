@@ -1,12 +1,12 @@
 var chai = require('chai'),
 	expect = require('chai').expect,
-	spies = require('chai-spies'),
+	sinon = require('sinon'),
 	ioserver = require('socket.io').listen(5000);
 	io = require('socket.io-client');
 
 var basedir = '../../';
 var gameio = require(basedir + 'gameio.js')(ioserver);
-ioserver.set('log level', 1);
+ioserver.set('log level', 2);
 
 var socketURL = 'http://0.0.0.0:5000';
 
@@ -15,8 +15,14 @@ var options ={
   'force new connection': true
 };
 
-before(function() {
-	chai.use(spies);
+var sandbox;
+
+beforeEach(function() {
+	sandbox = sinon.sandbox.create();
+});
+
+afterEach(function() {
+	sandbox.restore();
 });
 
 describe("[single connections]", function() {
@@ -245,6 +251,73 @@ describe("[multiple connections]", function() {
 		});
 
 		client_a.emit('create-game');	
+	});
+
+	it("a client can send commands to the game", function(done){
+		var game_id;
+
+		var clock = sandbox.useFakeTimers();
+
+		client_a.on('game-created', function(data) {
+			game_id = data.game_id;
+			client_a.emit('start-game');
+		});
+ 
+		client_a.on('game-started', function(data) {
+			client_a.emit('command', {dir:3});
+		});
+
+		client_a.on('command-received', function(data) {
+			var game = gameio.getGame(game_id);
+			var player = game.getPlayer(client_a.id);
+
+			sandbox.spy(player, 'turn');
+			expect(player.getDirection()).to.be.equal(0);
+
+			clock.tick(gameio.update_game_freq);
+			expect(player.turn.calledOnce).to.be.ok;
+			expect(player.getDirection()).to.be.equal(3);
+			done();
+		});
+
+		client_a.emit('create-game');
+	});
+
+	it("the commands are executed one by one (for each client) in each game step", function(done) {
+		var game_id;
+
+		var clock = sandbox.useFakeTimers();
+
+		client_a.on('game-created', function(data) {
+			game_id = data.game_id;
+			client_a.emit('start-game');
+		});
+
+		client_a.on('game-started', function(data) {
+			client_a.emit('command', {dir:3});
+			client_a.emit('command', {dir:3});
+			client_a.emit('command', {dir:3});
+		});
+
+		var count = 0;
+		client_a.on('command-received', function(data) {
+			count += 1;
+			if (count == 3) {
+				var game = gameio.getGame(game_id);
+				var player = game.getPlayer(client_a.id);
+
+				sandbox.spy(player, 'turn');
+				expect(player.getDirection()).to.be.equal(0);
+
+				clock.tick(gameio.update_game_freq);
+				expect(player.turn.calledOnce).to.be.ok;
+				expect(player.getDirection()).to.be.equal(3);
+				done();
+			}
+		});
+
+
+		client_a.emit('create-game');
 	});
 
 	it("clients receive game status", function(done){
