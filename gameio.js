@@ -117,13 +117,13 @@ module.exports = function(io){
 
   function initUpdateClientsInterval(io, game) {
     var interval = setInterval(function() {
-        var game_status = game.getStatus();
+        game.getStatus(function(game_status) {
+          game_status.game_id = game.id;
+          game_status.timestamp = new Date().getTime();
 
-        game_status.game_id = game.id;
-        game_status.timestamp = new Date().getTime();
+          io.sockets.in(game.id).emit('game-status', game_status);
+        });
 
-        io.sockets.in(game.id).emit('game-status', game_status);
-    
     }, update_clients_freq);
 
     return interval;
@@ -133,12 +133,6 @@ module.exports = function(io){
     var interval = setInterval(function() {
         processCommands(game);
         game.step();
-
-        var placeItems = Math.random() < 0.01;
-        if (!!placeItems) {
-          game.getWorld().putItems();
-        }
-
         io.sockets.in(game.id).emit('game-step');
     }, update_game_freq);
 

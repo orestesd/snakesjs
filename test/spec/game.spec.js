@@ -97,16 +97,18 @@ describe("[starting a game and adding players]", function() {
 		expect(world.init.calledOnce).to.be.ok;
 	});
 
-	it("the game return the current status", function() {
+	it("the game return the current status", function(done) {
 		var player_a = snakes.createPlayer(1, 'john');
 		var player_b = snakes.createPlayer(2, 'paul');
 
 		game.addPlayer(player_a);
 		game.addPlayer(player_b);
 
-		var status = game.getStatus();
-		expect(status.players).to.have.length(2);
-		expect(status.players[0].positions).to.deep.equal(player_a.getPositions());
+		var status = game.getStatus(function(status) {
+			expect(status.players).to.have.length(2);
+			expect(status.players[0].positions).to.deep.equal(player_a.getPositions());
+			done();
+		});
 
 	});
 });

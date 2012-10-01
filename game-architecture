@@ -1,0 +1,25 @@
+
+	createPlayer(id, name)
+	createWorld(topo)
+
+
+	createGame(world)
+	
+		start()
+		step()
+		command(c)
+		isStarted()
+		addPlayer(player)
+		getPlayerNames()
+		getPlayers()
+		getPlayer(id)
+		getStatus()
+		getWorld().getTopology()
+		
+		
+========================================================================================================================
+
+
+	game-io
+	game-runner
+	game
