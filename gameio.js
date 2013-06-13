@@ -8,8 +8,8 @@ module.exports = function(io){
   var games = {};
   var commands = {};
 
-  var update_clients_freq = 1000 / 7;
-  var update_game_freq = 1000 / 7;
+  var update_clients_freq = 1000 / 12;
+  var update_game_freq = 1000 / 3;
 
   function init_io(io){
 

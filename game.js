@@ -116,7 +116,7 @@ var Game = function(world) {
 	this.on('step', function() {
 		_world.moveAll();
 
-		var placeItems = Math.random() < 0.01;
+		var placeItems = Math.random() < 0.05;
         if (!!placeItems) {
           _world.putItems();
         }
