@@ -19,8 +19,8 @@ SnakeJS.drawer = (function(app, $, undefined) {
     context = canvas.getContext("2d");    
     grid = app.game.topology.grid;
     square = {
-      width: 20,
-      height: 20
+      width: 18,
+      height: 18
     }
 
     canvas_size = {width:square.width * getGridWidth(), height:square.height * getGridHeight()};
