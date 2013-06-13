@@ -43,6 +43,8 @@ SnakeJS.events = (function(app, $, undefined) {
     	$('#register').click(function() {
     		var player_name = $('#player_name').val();
 
+            $('#loading_modal').modal({keyboard:false, backdrop:'static'});
+
             if (player_name) {
                 app.io.emit('register', {name: player_name});
             }
@@ -72,6 +74,7 @@ SnakeJS.events = (function(app, $, undefined) {
         
         $(document).bind('registered', function(event, data) {
             console.log('registered:', data);
+            $('#loading_modal').modal('hide');
 
             app.game.player_id = data.client_id;
             app.game.player_name = data.client_name;
@@ -79,7 +82,7 @@ SnakeJS.events = (function(app, $, undefined) {
             $('.unregistered').addClass('hide');
             $('.registered').removeClass('hide');
 
-            $.tmpl('Welcome ${name}', {name:app.player_name}).prependTo('.registered');
+            $.tmpl('<h2>Welcome ${name}<h2><p>You can start a new game or join an existing one</p>', {name:app.game.player_name}).prependTo('.registered');
 
             console.log(window.location.search)
             if (window.location.search.indexOf('?g=') >= 0) {
@@ -95,12 +98,12 @@ SnakeJS.events = (function(app, $, undefined) {
             app.game.topology = data.topology;
             app.game.player_names = [app.game.player_name];
 
-            $("#playerListTemplate").tmpl({player_names:app.game.player_names}).appendTo($("#game div").empty());
+            $("#playerListTemplate").tmpl({player_names:app.game.player_names}).appendTo($("#game .playerlist").empty());
             $('#game').removeClass('hide');
             $('#init_form').addClass('hide');
 
             var link = window.location.href + '?g='+app.game.id;
-            $('#gameLinkTemplate').tmpl({link:link}).prependTo($("#game span").empty());
+            $('#gameLinkTemplate').tmpl({link:link}).prependTo($("#game .joinlink").empty());
         });
 
         $(document).bind('game-joined', function(event, data) {
@@ -110,13 +113,14 @@ SnakeJS.events = (function(app, $, undefined) {
             app.game.topology = data.topology;
             app.game.player_names = data.player_names;
 
-            $("#playerListTemplate").tmpl({player_names:app.game.player_names}).appendTo($("#game div").empty());
+            $("#playerListTemplate").tmpl({player_names:app.game.player_names}).appendTo($("#game .playerlist").empty());
             $('#game').removeClass('hide');
             $('#init_form').addClass('hide');
         });
 
         $(document).bind('game-started', function(event, data) {
             console.log('game-started:', data);
+            $('#start_game').addClass('disabled');
 
             app.drawer.init($('#canvas')[0], app.game.topology, app.game.player_names);
             
@@ -130,7 +134,7 @@ SnakeJS.events = (function(app, $, undefined) {
         $(document).bind('player-dead', function(event, data) {
             console.log('player dead', data);
             app.drawer.stop();
-            $('#game > div').append($('<span>game end. player _p loses</span>'.replace('_p', data.name)));
+            $('#game #game_messages').append($('<span>game end. player _p loses</span>'.replace('_p', data.name)));
         });
 
         $(document).bind('error', function(event, data) {

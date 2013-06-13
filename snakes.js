@@ -12,7 +12,7 @@ var Player = function(id, name) {
 	var _direction = DIRECTIONS.UP;
 	var _speed = 1;
 
-	var _max_dead = 5;
+	var _max_dead = 10;
 	var _dead_count = 0;
 
 	var _tail_size = 5;

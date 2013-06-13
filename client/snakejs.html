@@ -17,10 +17,11 @@
   </head>
   <body>
 
-  	<div class="container">
-  		<div id="init_form" class="hero-unit">
-			<h1>SnakeJS</h1>
-			<p>Simple multiplayer snake game.</p>
+  	<div class="container hero-unit">
+        <h1>SnakeJS</h1>
+        <p>Simple multiplayer snake game.</p>
+
+  		<div id="init_form" >
 			<p class="unregistered">
 				<label for="player_name">Name</label>
 				<input id="player_name" />
@@ -32,21 +33,36 @@
 			</p>
 		</div>
 
-		<div id="game" class="hide">
-			<div></div>
-			<span></span>
-			<a class="btn btn-primary btn-large" id="start_game">Start game</a>
-			<canvas id="canvas" />
+		<div id="game" class="row hide">
+            <div class="span4">
+    			<p class="playerlist"></p>
+    			<span class="joinlink"></span>
+                <div id="game_messages"></div>
+                <a class="btn btn-primary btn-large" id="start_game">Start game</a>
+            </div>
+            <div class="span8">
+                <canvas id="canvas" />
+            </div>
 		</div>
 	</div>
 
-	<div id="register_modal" class="modal hide fade">
-		<input id="game_id" placeholder="game id" />
-		<a class="btn btn-primary btn-large" data-dismiss="modal" id="join_game">Join!</a>
-	</div>
+	<div id="loading_modal" class="modal hide fade">
+        <p>Registering...</p>
+    </div>
+
+    <div id="register_modal" class="modal hide fade ">
+        <div>
+            <span>Insert the game id to join</span>
+            <p>
+                <input id="game_id" placeholder="game id" />
+                <a class="btn btn-primary btn-large" data-dismiss="modal" id="join_game">Join!</a>
+            </p>
+        </div>
+    </div>
 
 	<!-- jQuery templates-->
 	<script id="playerListTemplate" type="text/x-jquery-tmpl">
+        Current game players:
 		<ul>	
 			{{each player_names}}
 				<li>${$value}</li>
@@ -55,7 +71,8 @@
 	</script>
 
 	<script id="gameLinkTemplate" type="text/x-jquery-tmpl">
-		join link:${link}
+		send this link to a friend for join this game:<br>
+        ${link}
 	</script>
 
 	<script src="/js/app.js"></script>

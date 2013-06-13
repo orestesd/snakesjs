@@ -4,3 +4,7 @@
 	height: 0px;
 	border: 1px solid black;
 }
+
+.modal > div {
+    margin: 3em;
+}
