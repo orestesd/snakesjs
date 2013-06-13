@@ -1,0 +1,11 @@
+
+	
+lag compensation
+	introduce delta time
+
+========================================================================
+
+modularize
+	game-io
+	game-runner
+	game
