@@ -12,6 +12,10 @@
   "dependencies": {
     "express": "2.x.x",
     "socket.io": "0.9.x",
-    "connect": "2.4.x"
+    "socket.io-client": "0.9.8",
+    "connect": "2.4.x",
+	"mocha": "1.10.x",
+    "chai": "1.1.x",
+    "sinon": "1.4.x"
   }
 }
