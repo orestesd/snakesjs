@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "start": "node server.js",
-    "test": "mocha test/spec/"
+    "test": "mocha --timeout 5000 test/spec/"
   },
   "engines": {
     "node": "0.8.x",
